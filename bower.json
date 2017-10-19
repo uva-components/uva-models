@@ -1,5 +1,5 @@
 {
-  "name": "uva-buildings",
+  "name": "uva-models",
   "description": "Helper component to list buildings on grounds",
   "main": "uva-buildings.html",
   "dependencies": {
