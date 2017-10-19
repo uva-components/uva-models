@@ -27,7 +27,6 @@
           building: {
             type: Object,
             computed: "_firstBuilding(buildings)",
-            readOnly: true,
             notify: true
           },
           name: {
@@ -43,13 +42,25 @@
             notify: true
           },
           category: {
-            type: String
+            type: String,
+            observer: "_fetchBuildings"
           }
         };
       }
       ready() {
         super.ready();
         this._fetchBuildings();
+        this._fetchCategories();
+      }
+      _fetchCategories() {
+        var url = "https://api.library.virginia.edu/devhub/categories";
+        fetch(url).then(function(response){
+          return response.json();
+        }).then(function(data){
+          if (data && Array.isArray(data)) {
+            this._setCategories(data);
+          }
+        }.bind(this));
       }
       _fetchBuildings() {
         if (this.key ) {
@@ -63,7 +74,6 @@
           } else {
             url += "buildings";
           }
-          console.log(url);
           fetch(url).then(function(response){
             return response.json();
           }).then(function(data){
