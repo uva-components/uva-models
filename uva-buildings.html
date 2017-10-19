@@ -1,0 +1,97 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="uva-buildings">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[key]]</h2>
+  </template>
+
+  <script>
+    /**
+     * `uva-buildings`
+     * Helper component to list buildings on grounds
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class UvaBuildings extends Polymer.Element {
+      static get is() { return 'uva-buildings'; }
+      static get properties() {
+        return {
+          key: {
+            type: String
+          },
+          buildings: {
+            type: Array,
+            value: function(){return [];},
+            readOnly: true,
+            notify: true
+          },
+          building: {
+            type: Object,
+            computed: "_firstBuilding(buildings)",
+            readOnly: true,
+            notify: true
+          },
+          name: {
+            type: String
+          },
+          id: {
+            type: String
+          },
+          categories: {
+            type: Array,
+            value: function(){return [];},
+            readOnly: true,
+            notify: true
+          },
+          category: {
+            type: String
+          }
+        };
+      }
+      ready() {
+        super.ready();
+        this._fetchBuildings();
+      }
+      _fetchBuildings() {
+        if (this.key ) {
+          var url = "https://api.library.virginia.edu/devhub/";
+          if (this.id) {
+            url += "buildingId/"+this.id;
+          } else if (this.name) {
+            url += "buildings/"+this.name;
+          } else if (this.category) {
+            url += "categories/"+this.category;
+          } else {
+            url += "buildings";
+          }
+          console.log(url);
+          fetch(url).then(function(response){
+            return response.json();
+          }).then(function(data){
+            if (data) {
+              if (Array.isArray(data)) {
+                this._setBuildings(data);
+              } else {
+                this._setBuildings(new Array(data));
+              }
+            }
+          }.bind(this));
+        }
+      }
+      _firstBuilding() {
+        return (this.buildings && this.buildings.length > 0)?
+          this.buildings[0]:
+          null;
+      }
+    }
+
+    window.customElements.define(UvaBuildings.is, UvaBuildings);
+  </script>
+</dom-module>
