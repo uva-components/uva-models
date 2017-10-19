@@ -25,6 +25,10 @@
     "app-storage": "^2.0.2",
     "iron-location": "1 - 2",
     "app-layout": "1 - 2",
-    "iron-doc-viewer": "^3.0.0"
+    "iron-doc-viewer": "^3.0.0",
+    "iron-selector": "^2.0.0"
+  },
+  "devDependencies": {
+    "google-map": "GoogleWebComponents/google-map#^2.0.2"
   }
 }
