@@ -1,11 +1,27 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 
 <dom-module id="uva-buildings">
-
+  <template>
+    <iron-ajax auto url="[[_buildingsURL]]" handle-as="json" last-response="{{_buildings}}">
+    <app-indexeddb-mirror key="[[_buildingsURL]]" data="[[_asArray(_buildings)]]" persisted-data="{{buildings}}"></app-indexeddb-mirror>
+    <iron-ajax auto url="[[_categoriesURL]]" handle-as="json" last-response="{{_categories}}">
+    <app-indexeddb-mirror key="[[_categoriesURL]]" data="[[_categories]]" persisted-data="{{categories}}"></app-indexeddb-mirror>
+  </template>
   <script>
     /**
      * `uva-buildings`
-     * Helper component to list buildings on grounds
+     * Helper component to bind to the UVA buildings API.
+     * This API provides information about many buildings on campus. It can be used to get building information such as Name, Category, Address, Square Footage, Year Built, and GPS coordinates of every place on campus.
+     *
+     * All buildings are available via the `buildings` attribute and can be filtered via the `category` attribute.  All of the valid categories to filter by are available via the `catagories` attribute.
+     *
+     * Example:
+     *
+     *    <uva-buildings buildings="{{buildings}}" category="{{category}}" categories="{{categories}}"></uva-buildings>
+     *
+     *
      *
      * @customElement
      * @polymer
@@ -15,13 +31,13 @@
       static get is() { return 'uva-buildings'; }
       static get properties() {
         return {
-          key: {
-            type: String
+          _buildings: {
+            type: Array,
+            value: function(){return [];},
           },
           buildings: {
             type: Array,
             value: function(){return [];},
-            readOnly: true,
             notify: true
           },
           building: {
@@ -35,57 +51,52 @@
           id: {
             type: String
           },
+          _categories: {
+            type: Array,
+            value: function(){return [];},
+          },
           categories: {
             type: Array,
             value: function(){return [];},
-            readOnly: true,
             notify: true
           },
           category: {
+            type: String
+          },
+          _buildingsURL: {
             type: String,
-            observer: "_fetchBuildings"
+            computed: "_makeBuildingsURL(name, id, category, _buildings)",
+            notify: true
+          },
+          _categoriesURL: {
+            type: String,
+            value: "https://api.library.virginia.edu/devhub/categories",
+            notify: true
           }
         };
       }
       ready() {
         super.ready();
-        this._fetchBuildings();
-        this._fetchCategories();
       }
-      _fetchCategories() {
-        var url = "https://api.library.virginia.edu/devhub/categories";
-        fetch(url).then(function(response){
-          return response.json();
-        }).then(function(data){
-          if (data && Array.isArray(data)) {
-            this._setCategories(data);
-          }
-        }.bind(this));
+      _asArray(obj){
+        return (Array.isArray(obj))?
+          obj:
+          new Array(obj);
       }
-      _fetchBuildings() {
-        if (this.key ) {
-          var url = "https://api.library.virginia.edu/devhub/";
-          if (this.id) {
-            url += "buildingId/"+this.id;
-          } else if (this.name) {
-            url += "buildings/"+this.name;
-          } else if (this.category) {
-            url += "categories/"+this.category;
-          } else {
-            url += "buildings";
-          }
-          fetch(url).then(function(response){
-            return response.json();
-          }).then(function(data){
-            if (data) {
-              if (Array.isArray(data)) {
-                this._setBuildings(data);
-              } else {
-                this._setBuildings(new Array(data));
-              }
-            }
-          }.bind(this));
+      _makeBuildingsURL(name, id, category) {
+        console.log('burl');
+        var url = "https://api.library.virginia.edu/devhub/";
+        if (id) {
+          url += "buildingId/"+id;
+        } else if (name) {
+          url += "buildings/"+name;
+        } else if (category) {
+          url += "categories/"+category;
+        } else {
+          url += "buildings";
         }
+        console.log(url);
+        return url;
       }
       _firstBuilding() {
         return (this.buildings && this.buildings.length > 0)?

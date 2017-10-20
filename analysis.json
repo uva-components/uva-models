@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "elements": [
     {
-      "description": "`uva-buildings`\nHelper component to list buildings on grounds",
+      "description": "`uva-buildings`\nHelper component to bind to the UVA buildings API.\nThis API provides information about many buildings on campus. It can be used to get building information such as Name, Category, Address, Square Footage, Year Built, and GPS coordinates of every place on campus.\n\nAll buildings are available via the `buildings` attribute and can be filtered via the `category` attribute.  All of the valid categories to filter by are available via the `catagories` attribute.\n\nExample:\n\n   <uva-buildings buildings=\"{{buildings}}\" category=\"{{category}}\" categories=\"{{categories}}\"></uva-buildings>",
       "summary": "",
       "path": "uva-buildings.html",
       "properties": [
@@ -766,23 +766,24 @@
           "inheritedFrom": "Polymer.ElementMixin"
         },
         {
-          "name": "key",
-          "type": "string",
+          "name": "_buildings",
+          "type": "Array",
           "description": "",
-          "privacy": "public",
+          "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 25,
+              "line": 33,
               "column": 10
             },
             "end": {
-              "line": 27,
+              "line": 36,
               "column": 11
             }
           },
           "metadata": {
             "polymer": {}
-          }
+          },
+          "defaultValue": "[]"
         },
         {
           "name": "buildings",
@@ -791,18 +792,17 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 28,
+              "line": 37,
               "column": 10
             },
             "end": {
-              "line": 33,
+              "line": 41,
               "column": 11
             }
           },
           "metadata": {
             "polymer": {
-              "notify": true,
-              "readOnly": true
+              "notify": true
             }
           },
           "defaultValue": "[]"
@@ -814,11 +814,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 34,
+              "line": 42,
               "column": 10
             },
             "end": {
-              "line": 39,
+              "line": 46,
               "column": 11
             }
           },
@@ -836,11 +836,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 40,
+              "line": 47,
               "column": 10
             },
             "end": {
-              "line": 42,
+              "line": 49,
               "column": 11
             }
           },
@@ -855,11 +855,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 43,
+              "line": 50,
               "column": 10
             },
             "end": {
-              "line": 45,
+              "line": 52,
               "column": 11
             }
           },
@@ -868,24 +868,43 @@
           }
         },
         {
+          "name": "_categories",
+          "type": "Array",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 53,
+              "column": 10
+            },
+            "end": {
+              "line": 56,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {}
+          },
+          "defaultValue": "[]"
+        },
+        {
           "name": "categories",
           "type": "Array",
           "description": "",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 46,
+              "line": 57,
               "column": 10
             },
             "end": {
-              "line": 51,
+              "line": 61,
               "column": 11
             }
           },
           "metadata": {
             "polymer": {
-              "notify": true,
-              "readOnly": true
+              "notify": true
             }
           },
           "defaultValue": "[]"
@@ -897,17 +916,61 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 52,
+              "line": 62,
               "column": 10
             },
             "end": {
-              "line": 54,
+              "line": 64,
               "column": 11
             }
           },
           "metadata": {
             "polymer": {}
           }
+        },
+        {
+          "name": "_buildingsURL",
+          "type": "string",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 65,
+              "column": 10
+            },
+            "end": {
+              "line": 69,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true,
+              "readOnly": true
+            }
+          }
+        },
+        {
+          "name": "_categoriesURL",
+          "type": "string",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 70,
+              "column": 10
+            },
+            "end": {
+              "line": 74,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "notify": true
+            }
+          },
+          "defaultValue": "\"https://api.library.virginia.edu/devhub/categories\""
         }
       ],
       "methods": [
@@ -1572,11 +1635,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 57,
+              "line": 77,
               "column": 6
             },
             "end": {
-              "line": 60,
+              "line": 79,
               "column": 7
             }
           },
@@ -2811,21 +2874,52 @@
           "inheritedFrom": "Polymer.ElementMixin"
         },
         {
-          "name": "_fetchBuildings",
+          "name": "_asArray",
           "description": "",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 61,
+              "line": 80,
               "column": 6
             },
             "end": {
-              "line": 86,
+              "line": 84,
               "column": 7
             }
           },
           "metadata": {},
-          "params": []
+          "params": [
+            {
+              "name": "obj"
+            }
+          ]
+        },
+        {
+          "name": "_makeBuildingsURL",
+          "description": "",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 85,
+              "column": 6
+            },
+            "end": {
+              "line": 99,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "name"
+            },
+            {
+              "name": "id"
+            },
+            {
+              "name": "category"
+            }
+          ]
         },
         {
           "name": "_firstBuilding",
@@ -2833,11 +2927,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 87,
+              "line": 100,
               "column": 6
             },
             "end": {
-              "line": 91,
+              "line": 104,
               "column": 7
             }
           },
@@ -3623,11 +3717,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 21,
+          "line": 29,
           "column": 4
         },
         "end": {
-          "line": 92,
+          "line": 105,
           "column": 5
         }
       },
@@ -3636,31 +3730,15 @@
       "name": "UvaBuildings",
       "attributes": [
         {
-          "name": "key",
-          "description": "",
-          "sourceRange": {
-            "start": {
-              "line": 25,
-              "column": 10
-            },
-            "end": {
-              "line": 27,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "string"
-        },
-        {
           "name": "buildings",
           "description": "",
           "sourceRange": {
             "start": {
-              "line": 28,
+              "line": 37,
               "column": 10
             },
             "end": {
-              "line": 33,
+              "line": 41,
               "column": 11
             }
           },
@@ -3672,11 +3750,11 @@
           "description": "",
           "sourceRange": {
             "start": {
-              "line": 34,
+              "line": 42,
               "column": 10
             },
             "end": {
-              "line": 39,
+              "line": 46,
               "column": 11
             }
           },
@@ -3688,11 +3766,11 @@
           "description": "",
           "sourceRange": {
             "start": {
-              "line": 40,
+              "line": 47,
               "column": 10
             },
             "end": {
-              "line": 42,
+              "line": 49,
               "column": 11
             }
           },
@@ -3704,11 +3782,11 @@
           "description": "",
           "sourceRange": {
             "start": {
-              "line": 43,
+              "line": 50,
               "column": 10
             },
             "end": {
-              "line": 45,
+              "line": 52,
               "column": 11
             }
           },
@@ -3720,11 +3798,11 @@
           "description": "",
           "sourceRange": {
             "start": {
-              "line": 46,
+              "line": 57,
               "column": 10
             },
             "end": {
-              "line": 51,
+              "line": 61,
               "column": 11
             }
           },
@@ -3736,11 +3814,11 @@
           "description": "",
           "sourceRange": {
             "start": {
-              "line": 52,
+              "line": 62,
               "column": 10
             },
             "end": {
-              "line": 54,
+              "line": 64,
               "column": 11
             }
           },
