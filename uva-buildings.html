@@ -5,7 +5,7 @@
 <dom-module id="uva-buildings">
   <template>
     <iron-ajax auto url="[[_buildingsURL]]" handle-as="json" last-response="{{_buildings}}">
-    <app-indexeddb-mirror key="[[_buildingsURL]]" data="[[_asArray(_buildings)]]" persisted-data="{{buildings}}"></app-indexeddb-mirror>
+    <app-indexeddb-mirror key="[[_buildingsURL]]" data="[[_asArray(_buildings)]]" persisted-data="{{_persistedBuildings}}"></app-indexeddb-mirror>
     <iron-ajax auto url="[[_categoriesURL]]" handle-as="json" last-response="{{_categories}}">
     <app-indexeddb-mirror key="[[_categoriesURL]]" data="[[_categories]]" persisted-data="{{categories}}"></app-indexeddb-mirror>
   </template>
@@ -33,7 +33,12 @@
         return {
           _buildings: {
             type: Array,
+            value: function(){return [];}
+          },
+          _persistedBuildings: {
+            type: Array,
             value: function(){return [];},
+            observer: "_filterBuildings"
           },
           buildings: {
             type: Array,
@@ -61,11 +66,46 @@
             notify: true
           },
           category: {
-            type: String
+            type: String,
+            observer: "_filterBuildings"
           },
+
+          minSquareFootage: {
+            type: Number,
+            observer: "_filterBuildings"
+          },
+          maxSquareFootage: {
+            type: Number,
+            observer: "_filterBuildings"
+          },
+          minYearBuilt: {
+            type: Number,
+            observer: "_filterBuildings"
+          },
+          maxYearBuilt: {
+            type: Number,
+            observer: "_filterBuildings"
+          },
+          historic: {
+            type: Boolean,
+            observer: "_filterBuildings"
+          },
+          latitude: {
+            type: Number,
+            observer: "_filterBuildings"
+          },
+          longitude: {
+            type: Number,
+            observer: "_filterBuildings"
+          },
+          distance: {
+            type: Number,
+            observer: "_filterBuildings"
+          },
+
           _buildingsURL: {
             type: String,
-            computed: "_makeBuildingsURL(name, id, category, _buildings)",
+            computed: "_makeBuildingsURL(name, id, _buildings)",
             notify: true
           },
           _categoriesURL: {
@@ -83,6 +123,36 @@
           obj:
           new Array(obj);
       }
+      _filterBuildings(whichFilter) {
+        // A bit crude, but it get err done
+        var buildings = this._persistedBuildings;
+        if (this.category) buildings = buildings.filter((bl) => bl.Category.toLowerCase() == this.category.toLowerCase() );
+        if (this.minSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage >= this.minSquareFootage );
+        if (this.maxSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage <= this.maxSquareFootage );
+        if (this.minYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt >= this.minYearBuilt );
+        if (this.maxYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt <= this.maxYearBuilt );
+        if (this.historic) buildings = buildings.filter((bl) => bl.Historic );
+        if (this.latitude && this.longitude) {
+          // add a distance property to the buildings
+          buildings.forEach(function(bl){
+            if (bl.Latitude && bl.Longitude) {
+              bl.distance = this._distance(bl.Latitude,bl.Longitude,this.latitude,this.longitude);
+            }
+            if (this.distance) buildings = buildings.filter((b) => b.distance && b.distance <= this.distance);
+          });
+        }
+        this.set('buildings', buildings);
+        console.log('set buildings');
+      }
+      _distance(lat1, lon1, lat2, lon2) {
+        var p = 0.017453292519943295;    // Math.PI / 180
+        var c = Math.cos;
+        var a = 0.5 - c((lat2 - lat1) * p)/2 +
+                c(lat1 * p) * c(lat2 * p) *
+                (1 - c((lon2 - lon1) * p))/2;
+
+        return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+      }
       _makeBuildingsURL(name, id, category) {
         console.log('burl');
         var url = "https://api.library.virginia.edu/devhub/";
@@ -90,8 +160,6 @@
           url += "buildingId/"+id;
         } else if (name) {
           url += "buildings/"+name;
-        } else if (category) {
-          url += "categories/"+category;
         } else {
           url += "buildings";
         }
