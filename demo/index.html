@@ -29,12 +29,12 @@
           <dom-bind>
             <template>
 
-              <uva-buildings key="59e7aea6e85e555020cdfe4d" buildings="{{buildings}}" category="{{category}}" categories="{{categories}}"></uva-buildings>
+              <uva-buildings key="59e7aea6e85e555020cdfe4d" buildings="{{buildings}}" category="{{category}}" categories="{{categories}}" loading="{{loading}}"></uva-buildings>
               <uva-buildings key="59e7aea6e85e555020cdfe4d" name="ROTUNDA" building="{{rotunda}}"></uva-buildings>
 
               <h1>Listing of UVA buildings</h1>
               <div>
-                <select value="{{category::change}}" style="margin-bottom: 15px;">
+                <select value="{{category::change}}" style="margin-bottom: 15px;" disabled$="{{loading}}">
                   <option selected>Select a category to filter</option>
                   <dom-repeat items="[[categories]]">
                     <template is="dom-repeat" items="[[categories]]">
