@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>uva-buildings demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../../polymer/polymer.html">
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-range-slider/paper-range-slider.html">
+    <link rel="import" href="../../iron-selector/iron-selector.html">
+    <link rel="import" href="../../google-map/google-map.html">
+    <link rel="import" href="../../google-map/google-map-marker.html">
+    <link rel="import" href="../uva-buildings.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic uva-buildings demo</h3>
+      <demo-snippet>
+        <template>
+          <dom-bind id="app">
+            <template>
+
+              <uva-buildings key="59e7aea6e85e555020cdfe4d" buildings="{{buildings}}" category="{{category}}" categories="{{categories}}" loading="{{loading}}" max-year-built="{{maxYearBuilt}}" min-year-built="{{minYearBuilt}}"></uva-buildings>
+              <uva-buildings key="59e7aea6e85e555020cdfe4d" name="ROTUNDA" building="{{rotunda}}"></uva-buildings>
+
+              <h1>Listing of UVA buildings</h1>
+              <div>
+                <select value="{{category::change}}" style="margin-bottom: 15px;" disabled$="{{loading}}">
+                  <option selected>Select a category to filter</option>
+                  <dom-repeat items="[[categories]]">
+                    <template is="dom-repeat" items="[[categories]]">
+                      <option value="[[item]]">[[item]]</option>
+                    </template>
+                  </dom-repeat>
+                </select><br />
+                <label for="year-selector">Year built:</label>
+                <paper-range-slider id="year-selector" snaps pin step='1' min='1780' max='2017' value-min="{{minYearBuilt}}" value-max="{{maxYearBuilt}}"></paper-range-slider>
+              </div>
+              <div style="height:200px; overflow:scroll; margin-bottom:20px;">
+                <dom-repeat items="[[buildings]]">
+                  <template>
+                    <div><strong>[[item.Name]]</strong> [[item.Address]]</div>
+                  </template>
+                </dom-repeat>
+              </div>
+
+
+              <google-map style="height:600px;" zoom="13" latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]" api-key="AIzaSyBxAaVYnYIkwmvR4pigOojpxvli_OxBeFs">
+                <dom-repeat items="[[buildings]]">
+                  <template>
+                    <dom-if if="[[item.Latitude]]">
+                      <template>
+                        <google-map-marker latitude="[[item.Latitude]]" longitude="[[item.Longitude]]" title="[[item.Name]]"></google-map-marker>
+                      </template>
+                    </dom-if>
+                  </template>
+                </dom-repeat>
+              </google-map>
+
+            </template>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+  <script>
+    app.maxYearBuilt = 2017;
+    app.minYearBuilt = 1780;
+  </script>
+</html>
