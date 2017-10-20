@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "elements": [
     {
-      "description": "`uva-buildings`\nHelper component to bind to the UVA buildings API.\nThis API provides information about many buildings on campus. It can be used to get building information such as Name, Category, Address, Square Footage, Year Built, and GPS coordinates of every place on campus.\n\nAll buildings are available via the `buildings` attribute and can be filtered via the `category` attribute.  All of the valid categories to filter by are available via the `catagories` attribute.\n\nExample:\n\n   <uva-buildings buildings=\"{{buildings}}\" category=\"{{category}}\" categories=\"{{categories}}\"></uva-buildings>",
+      "description": "`uva-buildings`\nHelper component to bind to the UVA buildings API.\nThis API provides information about many buildings on campus. It can be used to get building information such as Name, Category, Address, Square Footage, Year Built, and GPS coordinates of every place on campus.\n\nThe simplest usecase just returns all of the UVA buildings via the buildings attribute\n\nExample:\n\n   <uva-buildings buildings=\"{{buildings}}\"></uva-buildings>\n\nAll buildings are available via the `buildings` attribute and can be filtered via the `category` attribute.  All of the valid categories to filter by are available via the `catagories` attribute.\n\nExample:\n\n   <uva-buildings buildings=\"{{buildings}}\" category=\"{{category}}\" categories=\"{{categories}}\"></uva-buildings>",
       "summary": "",
       "path": "uva-buildings.html",
       "properties": [
@@ -772,11 +772,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 34,
+              "line": 40,
               "column": 10
             },
             "end": {
-              "line": 37,
+              "line": 43,
               "column": 11
             }
           },
@@ -792,11 +792,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 39,
+              "line": 46,
               "column": 10
             },
             "end": {
-              "line": 43,
+              "line": 50,
               "column": 11
             }
           },
@@ -814,11 +814,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 45,
+              "line": 53,
               "column": 10
             },
             "end": {
-              "line": 49,
+              "line": 57,
               "column": 11
             }
           },
@@ -836,11 +836,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 51,
+              "line": 60,
               "column": 10
             },
             "end": {
-              "line": 55,
+              "line": 64,
               "column": 11
             }
           },
@@ -858,11 +858,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 57,
+              "line": 67,
               "column": 10
             },
             "end": {
-              "line": 59,
+              "line": 69,
               "column": 11
             }
           },
@@ -877,11 +877,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 61,
+              "line": 72,
               "column": 10
             },
             "end": {
-              "line": 63,
+              "line": 74,
               "column": 11
             }
           },
@@ -896,11 +896,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 65,
+              "line": 77,
               "column": 10
             },
             "end": {
-              "line": 68,
+              "line": 80,
               "column": 11
             }
           },
@@ -916,11 +916,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 70,
+              "line": 83,
               "column": 10
             },
             "end": {
-              "line": 74,
+              "line": 87,
               "column": 11
             }
           },
@@ -938,11 +938,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 76,
+              "line": 90,
               "column": 10
             },
             "end": {
-              "line": 79,
+              "line": 93,
               "column": 11
             }
           },
@@ -956,69 +956,6 @@
           "name": "minSquareFootage",
           "type": "number",
           "description": "The minimum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 81,
-              "column": 10
-            },
-            "end": {
-              "line": 84,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "observer": "\"_filterBuildings\""
-            }
-          }
-        },
-        {
-          "name": "maxSquareFootage",
-          "type": "number",
-          "description": "The maximum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 86,
-              "column": 10
-            },
-            "end": {
-              "line": 89,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "observer": "\"_filterBuildings\""
-            }
-          }
-        },
-        {
-          "name": "minYearBuilt",
-          "type": "number",
-          "description": "The oldest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
-          "privacy": "public",
-          "sourceRange": {
-            "start": {
-              "line": 91,
-              "column": 10
-            },
-            "end": {
-              "line": 94,
-              "column": 11
-            }
-          },
-          "metadata": {
-            "polymer": {
-              "observer": "\"_filterBuildings\""
-            }
-          }
-        },
-        {
-          "name": "maxYearBuilt",
-          "type": "number",
-          "description": "The newest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
           "privacy": "public",
           "sourceRange": {
             "start": {
@@ -1037,17 +974,80 @@
           }
         },
         {
+          "name": "maxSquareFootage",
+          "type": "number",
+          "description": "The maximum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 102,
+              "column": 10
+            },
+            "end": {
+              "line": 105,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "observer": "\"_filterBuildings\""
+            }
+          }
+        },
+        {
+          "name": "minYearBuilt",
+          "type": "number",
+          "description": "The oldest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 108,
+              "column": 10
+            },
+            "end": {
+              "line": 111,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "observer": "\"_filterBuildings\""
+            }
+          }
+        },
+        {
+          "name": "maxYearBuilt",
+          "type": "number",
+          "description": "The newest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
+          "privacy": "public",
+          "sourceRange": {
+            "start": {
+              "line": 114,
+              "column": 10
+            },
+            "end": {
+              "line": 117,
+              "column": 11
+            }
+          },
+          "metadata": {
+            "polymer": {
+              "observer": "\"_filterBuildings\""
+            }
+          }
+        },
+        {
           "name": "historic",
           "type": "boolean",
           "description": "If true, only historic buildings will be listed.  If false, all building are listed in `buildings`.",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 101,
+              "line": 120,
               "column": 10
             },
             "end": {
-              "line": 104,
+              "line": 123,
               "column": 11
             }
           },
@@ -1064,11 +1064,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 106,
+              "line": 126,
               "column": 10
             },
             "end": {
-              "line": 109,
+              "line": 129,
               "column": 11
             }
           },
@@ -1085,11 +1085,11 @@
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 111,
+              "line": 132,
               "column": 10
             },
             "end": {
-              "line": 114,
+              "line": 135,
               "column": 11
             }
           },
@@ -1102,15 +1102,15 @@
         {
           "name": "distance",
           "type": "number",
-          "description": "",
+          "description": "Filters the `buildings` property given `latitude` and `longitude` properties.  If present, buildings without a lat/long specified will be filtered from the `buildings` property",
           "privacy": "public",
           "sourceRange": {
             "start": {
-              "line": 115,
+              "line": 138,
               "column": 10
             },
             "end": {
-              "line": 118,
+              "line": 141,
               "column": 11
             }
           },
@@ -1123,15 +1123,15 @@
         {
           "name": "_buildingsURL",
           "type": "string",
-          "description": "",
+          "description": "Used to maintain the url used to fetch buildings via ajax.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 120,
+              "line": 144,
               "column": 10
             },
             "end": {
-              "line": 124,
+              "line": 148,
               "column": 11
             }
           },
@@ -1145,15 +1145,15 @@
         {
           "name": "_categoriesURL",
           "type": "string",
-          "description": "",
+          "description": "Used to maintain the url used to fetch categories via ajax.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 125,
+              "line": 151,
               "column": 10
             },
             "end": {
-              "line": 129,
+              "line": 155,
               "column": 11
             }
           },
@@ -1827,11 +1827,11 @@
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 132,
+              "line": 158,
               "column": 6
             },
             "end": {
-              "line": 134,
+              "line": 160,
               "column": 7
             }
           },
@@ -3067,119 +3067,142 @@
         },
         {
           "name": "_asArray",
-          "description": "",
+          "description": "Given an object, will return an Array if the object is not already an array.  Helper to be sure that we are getting an array from the Buildings API.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 135,
+              "line": 168,
               "column": 6
             },
             "end": {
-              "line": 139,
+              "line": 172,
               "column": 7
             }
           },
           "metadata": {},
           "params": [
             {
-              "name": "obj"
+              "name": "obj",
+              "type": "Object",
+              "description": "The object to be made into an Array if not one already."
             }
-          ]
+          ],
+          "return": {
+            "type": "Array.<Object>",
+            "desc": "An Array."
+          }
         },
         {
           "name": "_filterBuildings",
-          "description": "",
+          "description": "Filters buildings from `_persistedBuildings` to `buildings` using filtering properties.\nIt is a bit harsh in that it replaces `buildings` with a new Array.",
           "privacy": "protected",
           "sourceRange": {
             "start": {
-              "line": 140,
+              "line": 178,
               "column": 6
             },
             "end": {
-              "line": 160,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "whichFilter"
-            }
-          ]
-        },
-        {
-          "name": "_distance",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 161,
-              "column": 6
-            },
-            "end": {
-              "line": 169,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "lat1"
-            },
-            {
-              "name": "lon1"
-            },
-            {
-              "name": "lat2"
-            },
-            {
-              "name": "lon2"
-            }
-          ]
-        },
-        {
-          "name": "_makeBuildingsURL",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 170,
-              "column": 6
-            },
-            "end": {
-              "line": 182,
-              "column": 7
-            }
-          },
-          "metadata": {},
-          "params": [
-            {
-              "name": "name"
-            },
-            {
-              "name": "id"
-            },
-            {
-              "name": "category"
-            }
-          ]
-        },
-        {
-          "name": "_firstBuilding",
-          "description": "",
-          "privacy": "protected",
-          "sourceRange": {
-            "start": {
-              "line": 183,
-              "column": 6
-            },
-            "end": {
-              "line": 187,
+              "line": 198,
               "column": 7
             }
           },
           "metadata": {},
           "params": []
+        },
+        {
+          "name": "_distance",
+          "description": "Gets the distance in km between two lat/long sets.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 209,
+              "column": 6
+            },
+            "end": {
+              "line": 217,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "lat1",
+              "type": "Number",
+              "description": "The latitude of the first point."
+            },
+            {
+              "name": "lon1",
+              "type": "Number",
+              "description": "The longitude of the first point."
+            },
+            {
+              "name": "lat2",
+              "type": "Number",
+              "description": "The latitude of the second point."
+            },
+            {
+              "name": "lon2",
+              "type": "Number",
+              "description": "The longitude of the second point."
+            }
+          ],
+          "return": {
+            "type": "Number",
+            "desc": "The distance in km between the two points."
+          }
+        },
+        {
+          "name": "_makeBuildingsURL",
+          "description": "Makes the url used to make an ajax call for buildings taking into account the `id` and `name` fields.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 226,
+              "column": 6
+            },
+            "end": {
+              "line": 238,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [
+            {
+              "name": "name",
+              "type": "String",
+              "description": "The name of the building to return."
+            },
+            {
+              "name": "id",
+              "type": "String",
+              "description": "The id of the building to return."
+            }
+          ],
+          "return": {
+            "type": "String",
+            "desc": "The url to use to get the json from the Buildings API."
+          }
+        },
+        {
+          "name": "_firstBuilding",
+          "description": "Gets the first building from the `buildings` property.",
+          "privacy": "protected",
+          "sourceRange": {
+            "start": {
+              "line": 245,
+              "column": 6
+            },
+            "end": {
+              "line": 248,
+              "column": 7
+            }
+          },
+          "metadata": {},
+          "params": [],
+          "return": {
+            "type": "Object",
+            "desc": "The building object."
+          }
         }
       ],
       "staticMethods": [
@@ -3960,11 +3983,11 @@
       "metadata": {},
       "sourceRange": {
         "start": {
-          "line": 29,
+          "line": 35,
           "column": 4
         },
         "end": {
-          "line": 188,
+          "line": 249,
           "column": 5
         }
       },
@@ -3977,11 +4000,11 @@
           "description": "Used for storing the buildings that have been persisted and filtered",
           "sourceRange": {
             "start": {
-              "line": 45,
+              "line": 53,
               "column": 10
             },
             "end": {
-              "line": 49,
+              "line": 57,
               "column": 11
             }
           },
@@ -3993,11 +4016,11 @@
           "description": "This is the first building from the `buildings` property.  This is helpful if you specify the building by id or name and want to bind to the building.",
           "sourceRange": {
             "start": {
-              "line": 51,
+              "line": 60,
               "column": 10
             },
             "end": {
-              "line": 55,
+              "line": 64,
               "column": 11
             }
           },
@@ -4009,11 +4032,11 @@
           "description": "The Name of the building that you would like to filter",
           "sourceRange": {
             "start": {
-              "line": 57,
+              "line": 67,
               "column": 10
             },
             "end": {
-              "line": 59,
+              "line": 69,
               "column": 11
             }
           },
@@ -4025,11 +4048,11 @@
           "description": "The id of the building that you would like to filter",
           "sourceRange": {
             "start": {
-              "line": 61,
+              "line": 72,
               "column": 10
             },
             "end": {
-              "line": 63,
+              "line": 74,
               "column": 11
             }
           },
@@ -4041,11 +4064,11 @@
           "description": "The available categories of buildings, not filtered in any way",
           "sourceRange": {
             "start": {
-              "line": 70,
+              "line": 83,
               "column": 10
             },
             "end": {
-              "line": 74,
+              "line": 87,
               "column": 11
             }
           },
@@ -4057,11 +4080,11 @@
           "description": "The category (case insensitive) of buildings to filter by",
           "sourceRange": {
             "start": {
-              "line": 76,
+              "line": 90,
               "column": 10
             },
             "end": {
-              "line": 79,
+              "line": 93,
               "column": 11
             }
           },
@@ -4071,54 +4094,6 @@
         {
           "name": "min-square-footage",
           "description": "The minimum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set.",
-          "sourceRange": {
-            "start": {
-              "line": 81,
-              "column": 10
-            },
-            "end": {
-              "line": 84,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "number"
-        },
-        {
-          "name": "max-square-footage",
-          "description": "The maximum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set.",
-          "sourceRange": {
-            "start": {
-              "line": 86,
-              "column": 10
-            },
-            "end": {
-              "line": 89,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "number"
-        },
-        {
-          "name": "min-year-built",
-          "description": "The oldest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
-          "sourceRange": {
-            "start": {
-              "line": 91,
-              "column": 10
-            },
-            "end": {
-              "line": 94,
-              "column": 11
-            }
-          },
-          "metadata": {},
-          "type": "number"
-        },
-        {
-          "name": "max-year-built",
-          "description": "The newest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
           "sourceRange": {
             "start": {
               "line": 96,
@@ -4133,15 +4108,63 @@
           "type": "number"
         },
         {
+          "name": "max-square-footage",
+          "description": "The maximum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set.",
+          "sourceRange": {
+            "start": {
+              "line": 102,
+              "column": 10
+            },
+            "end": {
+              "line": 105,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "min-year-built",
+          "description": "The oldest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
+          "sourceRange": {
+            "start": {
+              "line": 108,
+              "column": 10
+            },
+            "end": {
+              "line": 111,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
+          "name": "max-year-built",
+          "description": "The newest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set.",
+          "sourceRange": {
+            "start": {
+              "line": 114,
+              "column": 10
+            },
+            "end": {
+              "line": 117,
+              "column": 11
+            }
+          },
+          "metadata": {},
+          "type": "number"
+        },
+        {
           "name": "historic",
           "description": "If true, only historic buildings will be listed.  If false, all building are listed in `buildings`.",
           "sourceRange": {
             "start": {
-              "line": 101,
+              "line": 120,
               "column": 10
             },
             "end": {
-              "line": 104,
+              "line": 123,
               "column": 11
             }
           },
@@ -4153,11 +4176,11 @@
           "description": "If present along with `longitude` will add a distance property to each building that has lat/long properties.  These propertys are also used with the `distance` attribute to filter buildings by distance from a point.",
           "sourceRange": {
             "start": {
-              "line": 106,
+              "line": 126,
               "column": 10
             },
             "end": {
-              "line": 109,
+              "line": 129,
               "column": 11
             }
           },
@@ -4169,11 +4192,11 @@
           "description": "If present along with `latitude` will add a distance property to each building that has lat/long properties.  These propertys are also used with the `distance` attribute to filter buildings by distance from a point.",
           "sourceRange": {
             "start": {
-              "line": 111,
+              "line": 132,
               "column": 10
             },
             "end": {
-              "line": 114,
+              "line": 135,
               "column": 11
             }
           },
@@ -4182,14 +4205,14 @@
         },
         {
           "name": "distance",
-          "description": "",
+          "description": "Filters the `buildings` property given `latitude` and `longitude` properties.  If present, buildings without a lat/long specified will be filtered from the `buildings` property",
           "sourceRange": {
             "start": {
-              "line": 115,
+              "line": 138,
               "column": 10
             },
             "end": {
-              "line": 118,
+              "line": 141,
               "column": 11
             }
           },

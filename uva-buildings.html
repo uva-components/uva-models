@@ -15,6 +15,12 @@
      * Helper component to bind to the UVA buildings API.
      * This API provides information about many buildings on campus. It can be used to get building information such as Name, Category, Address, Square Footage, Year Built, and GPS coordinates of every place on campus.
      *
+     * The simplest usecase just returns all of the UVA buildings via the buildings attribute
+     *
+     * Example:
+     *
+     *    <uva-buildings buildings="{{buildings}}"></uva-buildings>
+     *
      * All buildings are available via the `buildings` attribute and can be filtered via the `category` attribute.  All of the valid categories to filter by are available via the `catagories` attribute.
      *
      * Example:
@@ -36,94 +42,112 @@
             type: Array,
             value: function(){return [];}
           },
+
           /** Used for storing the persisted version of the buildings (this are not filtered in any way BUT are available offline if alreay cached) */
           _persistedBuildings: {
             type: Array,
             value: function(){return [];},
             observer: "_filterBuildings"
           },
+
           /** Used for storing the buildings that have been persisted and filtered */
           buildings: {
             type: Array,
             value: function(){return [];},
             notify: true
           },
+
           /** This is the first building from the `buildings` property.  This is helpful if you specify the building by id or name and want to bind to the building. */
           building: {
             type: Object,
             computed: "_firstBuilding(buildings)",
             notify: true
           },
+
           /** The Name of the building that you would like to filter */
           name: {
             type: String
           },
+
           /** The id of the building that you would like to filter */
           id: {
             type: String
           },
+
           /** Used to store the categories from ajax before being persisted */
           _categories: {
             type: Array,
             value: function(){return [];},
           },
+
           /** The available categories of buildings, not filtered in any way */
           categories: {
             type: Array,
             value: function(){return [];},
             notify: true
           },
+
           /** The category (case insensitive) of buildings to filter by */
           category: {
             type: String,
             observer: "_filterBuildings"
           },
+
           /** The minimum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set. */
           minSquareFootage: {
             type: Number,
             observer: "_filterBuildings"
           },
+
           /** The maximum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set. */
           maxSquareFootage: {
             type: Number,
             observer: "_filterBuildings"
           },
+
           /** The oldest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set. */
           minYearBuilt: {
             type: Number,
             observer: "_filterBuildings"
           },
+
           /** The newest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set. */
           maxYearBuilt: {
             type: Number,
             observer: "_filterBuildings"
           },
+
           /** If true, only historic buildings will be listed.  If false, all building are listed in `buildings`. */
           historic: {
             type: Boolean,
             observer: "_filterBuildings"
           },
+
           /** If present along with `longitude` will add a distance property to each building that has lat/long properties.  These propertys are also used with the `distance` attribute to filter buildings by distance from a point. */
           latitude: {
             type: Number,
             observer: "_filterBuildings"
           },
+
           /** If present along with `latitude` will add a distance property to each building that has lat/long properties.  These propertys are also used with the `distance` attribute to filter buildings by distance from a point. */
           longitude: {
             type: Number,
             observer: "_filterBuildings"
           },
+
           /** Filters the `buildings` property given `latitude` and `longitude` properties.  If present, buildings without a lat/long specified will be filtered from the `buildings` property */
           distance: {
             type: Number,
             observer: "_filterBuildings"
           },
+
           /** Used to maintain the url used to fetch buildings via ajax. */
           _buildingsURL: {
             type: String,
             computed: "_makeBuildingsURL(name, id, _buildings)",
             notify: true
           },
+
           /** Used to maintain the url used to fetch categories via ajax. */
           _categoriesURL: {
             type: String,
@@ -135,13 +159,25 @@
       ready() {
         super.ready();
       }
+
+      /**
+       * Given an object, will return an Array if the object is not already an array.  Helper to be sure that we are getting an array from the Buildings API.
+       *
+       * @param {Object} obj The object to be made into an Array if not one already.
+       * @return {Array<Object>} An Array.
+       */
       _asArray(obj){
         return (Array.isArray(obj))?
           obj:
           new Array(obj);
       }
-      _filterBuildings(whichFilter) {
-        // A bit crude, but it get err done
+
+      /**
+       * Filters buildings from `_persistedBuildings` to `buildings` using filtering properties.
+       * It is a bit harsh in that it replaces `buildings` with a new Array.
+       */
+      _filterBuildings() {
+        // A bit crude, but it gets err done
         var buildings = this._persistedBuildings;
         if (this.category) buildings = buildings.filter((bl) => bl.Category.toLowerCase() == this.category.toLowerCase() );
         if (this.minSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage >= this.minSquareFootage );
@@ -161,6 +197,16 @@
         this.set('buildings', buildings);
         console.log('set buildings');
       }
+
+      /**
+       * Gets the distance in km between two lat/long sets.
+       *
+       * @param {Number} lat1 The latitude of the first point.
+       * @param {Number} lon1 The longitude of the first point.
+       * @param {Number} lat2 The latitude of the second point.
+       * @param {Number} lon2 The longitude of the second point.
+       * @return {Number} The distance in km between the two points.
+       */
       _distance(lat1, lon1, lat2, lon2) {
         var p = 0.017453292519943295;    // Math.PI / 180
         var c = Math.cos;
@@ -170,7 +216,15 @@
 
         return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
       }
-      _makeBuildingsURL(name, id, category) {
+
+      /**
+       * Makes the url used to make an ajax call for buildings taking into account the `id` and `name` fields.
+       *
+       * @param {String} name The name of the building to return.
+       * @param {String} id The id of the building to return.
+       * @return {String} The url to use to get the json from the Buildings API.
+       */
+      _makeBuildingsURL(name, id) {
         console.log('burl');
         var url = "https://api.library.virginia.edu/devhub/";
         if (id) {
@@ -183,10 +237,15 @@
         console.log(url);
         return url;
       }
+
+      /**
+       * Gets the first building from the `buildings` property.
+       *
+       * @return {Object} The building object.
+       */
       _firstBuilding() {
         return (this.buildings && this.buildings.length > 0)?
-          this.buildings[0]:
-          null;
+          this.buildings[0]:null;
       }
     }
 
