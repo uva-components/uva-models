@@ -31,83 +31,100 @@
       static get is() { return 'uva-buildings'; }
       static get properties() {
         return {
+          /** Used for storing the buildings from ajax call (these are not filtered in any way and are not available offline) */
           _buildings: {
             type: Array,
             value: function(){return [];}
           },
+          /** Used for storing the persisted version of the buildings (this are not filtered in any way BUT are available offline if alreay cached) */
           _persistedBuildings: {
             type: Array,
             value: function(){return [];},
             observer: "_filterBuildings"
           },
+          /** Used for storing the buildings that have been persisted and filtered */
           buildings: {
             type: Array,
             value: function(){return [];},
             notify: true
           },
+          /** This is the first building from the `buildings` property.  This is helpful if you specify the building by id or name and want to bind to the building. */
           building: {
             type: Object,
             computed: "_firstBuilding(buildings)",
             notify: true
           },
+          /** The Name of the building that you would like to filter */
           name: {
             type: String
           },
+          /** The id of the building that you would like to filter */
           id: {
             type: String
           },
+          /** Used to store the categories from ajax before being persisted */
           _categories: {
             type: Array,
             value: function(){return [];},
           },
+          /** The available categories of buildings, not filtered in any way */
           categories: {
             type: Array,
             value: function(){return [];},
             notify: true
           },
+          /** The category (case insensitive) of buildings to filter by */
           category: {
             type: String,
             observer: "_filterBuildings"
           },
-
+          /** The minimum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set. */
           minSquareFootage: {
             type: Number,
             observer: "_filterBuildings"
           },
+          /** The maximum square footage that buildings will be filtered by.  If the building doesn't have a square footage specified it will be filtered out when this is set. */
           maxSquareFootage: {
             type: Number,
             observer: "_filterBuildings"
           },
+          /** The oldest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set. */
           minYearBuilt: {
             type: Number,
             observer: "_filterBuildings"
           },
+          /** The newest four digit year for a building in `buildings`.  If the building doesn't have a year built specified it will be filtered out when this is set. */
           maxYearBuilt: {
             type: Number,
             observer: "_filterBuildings"
           },
+          /** If true, only historic buildings will be listed.  If false, all building are listed in `buildings`. */
           historic: {
             type: Boolean,
             observer: "_filterBuildings"
           },
+          /** If present along with `longitude` will add a distance property to each building that has lat/long properties.  These propertys are also used with the `distance` attribute to filter buildings by distance from a point. */
           latitude: {
             type: Number,
             observer: "_filterBuildings"
           },
+          /** If present along with `latitude` will add a distance property to each building that has lat/long properties.  These propertys are also used with the `distance` attribute to filter buildings by distance from a point. */
           longitude: {
             type: Number,
             observer: "_filterBuildings"
           },
+          /** Filters the `buildings` property given `latitude` and `longitude` properties.  If present, buildings without a lat/long specified will be filtered from the `buildings` property */
           distance: {
             type: Number,
             observer: "_filterBuildings"
           },
-
+          /** Used to maintain the url used to fetch buildings via ajax. */
           _buildingsURL: {
             type: String,
             computed: "_makeBuildingsURL(name, id, _buildings)",
             notify: true
           },
+          /** Used to maintain the url used to fetch categories via ajax. */
           _categoriesURL: {
             type: String,
             value: "https://api.library.virginia.edu/devhub/categories",
