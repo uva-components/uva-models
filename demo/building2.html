@@ -31,13 +31,13 @@
             <template>
 
               <uva-buildings key="59e7aea6e85e555020cdfe4d" buildings="{{buildings}}" category="[[category]]"
-                categories="{{categories}}" loading="{{loading}}"
+                categories="{{categories}}" loading="{{loading}}" historic="{{historic}}"
                 max-year-built="[[maxYearBuilt]]" min-year-built="[[minYearBuilt]]"
                 min-square-footage="{{minSquareFootage}}" max-square-footage="{{maxSquareFootage}}"></uva-buildings>
               <uva-buildings key="59e7aea6e85e555020cdfe4d" name="ROTUNDA" building="{{rotunda}}"></uva-buildings>
 
               <h1>Listing of UVA buildings</h1>
-              <div>
+              <div style="margin-bottom: 15px;">
                 <select value="{{category::change}}" style="margin-bottom: 15px;" disabled$="{{loading}}">
                   <option selected>Select a category to filter</option>
                   <dom-repeat items="[[categories]]">
@@ -49,7 +49,9 @@
                 <label for="year-selector">Square Footage:</label>
                 <paper-range-slider id="square-footage" snaps pin step='1' min='0' max='100000' value-min="{{minSquareFootage}}" value-max="{{maxSquareFootage}}"></paper-range-slider><br>
                 <label for="year-selector">Year built:</label>
-                <paper-range-slider id="year-selector" snaps pin step='1' min='1780' max='2017' value-min="{{minYearBuilt}}" value-max="{{maxYearBuilt}}"></paper-range-slider>
+                <paper-range-slider id="year-selector" snaps pin step='1' min='1780' max='2017' value-min="{{minYearBuilt}}" value-max="{{maxYearBuilt}}"></paper-range-slider><br>
+                <label for="historic">Historic?</label>
+                <input type="checkbox" checked="{{historic::change}}"></input>
               </div>
               <div style="height:200px; overflow:scroll; margin-bottom:20px;">
                 <dom-repeat items="[[buildings]]">

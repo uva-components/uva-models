@@ -203,7 +203,7 @@
         if (this.maxSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage <= this.maxSquareFootage );
         if (this.minYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt >= this.minYearBuilt );
         if (this.maxYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt <= this.maxYearBuilt );
-        if (this.historic) buildings = buildings.filter((bl) => bl.Historic );
+        if (this.historic) buildings = buildings.filter((bl) => bl.Historic == "Y");
         if (this.latitude && this.longitude) {
           // add a distance property to the buildings
           buildings.forEach(function(bl){
