@@ -30,7 +30,10 @@
           <dom-bind id="app">
             <template>
 
-              <uva-buildings key="59e7aea6e85e555020cdfe4d" buildings="{{buildings}}" category="{{category}}" categories="{{categories}}" loading="{{loading}}" max-year-built="{{maxYearBuilt}}" min-year-built="{{minYearBuilt}}"></uva-buildings>
+              <uva-buildings key="59e7aea6e85e555020cdfe4d" buildings="{{buildings}}" category="[[category]]"
+                categories="{{categories}}" loading="{{loading}}"
+                max-year-built="[[maxYearBuilt]]" min-year-built="[[minYearBuilt]]"
+                min-square-footage="{{minSquareFootage}}" max-square-footage="{{maxSquareFootage}}"></uva-buildings>
               <uva-buildings key="59e7aea6e85e555020cdfe4d" name="ROTUNDA" building="{{rotunda}}"></uva-buildings>
 
               <h1>Listing of UVA buildings</h1>
@@ -43,6 +46,8 @@
                     </template>
                   </dom-repeat>
                 </select><br />
+                <label for="year-selector">Square Footage:</label>
+                <paper-range-slider id="square-footage" snaps pin step='1' min='0' max='100000' value-min="{{minSquareFootage}}" value-max="{{maxSquareFootage}}"></paper-range-slider><br>
                 <label for="year-selector">Year built:</label>
                 <paper-range-slider id="year-selector" snaps pin step='1' min='1780' max='2017' value-min="{{minYearBuilt}}" value-max="{{maxYearBuilt}}"></paper-range-slider>
               </div>
@@ -76,5 +81,7 @@
   <script>
     app.maxYearBuilt = 2017;
     app.minYearBuilt = 1780;
+    app.minSquareFootage = 0;
+    app.maxSquareFootage = 100000;
   </script>
 </html>
