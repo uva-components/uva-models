@@ -62,16 +62,17 @@
               </div>
 
 
-              <google-map style="height:600px;" zoom="13" latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]" api-key="AIzaSyBxAaVYnYIkwmvR4pigOojpxvli_OxBeFs">
+              <google-map style="height:600px;" zoom="15" latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]" api-key="AIzaSyBxAaVYnYIkwmvR4pigOojpxvli_OxBeFs">
                 <dom-repeat items="[[buildings]]">
                   <template>
                     <dom-if if="[[item.Latitude]]">
                       <template>
-                        <google-map-marker latitude="[[item.Latitude]]" longitude="[[item.Longitude]]" title="[[item.Name]]"></google-map-marker>
+                        <google-map-marker latitude="[[item.Latitude]]" longitude="[[item.Longitude]]" title="[[item.Name]]" icon='"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAMAAADXT/YiAAAATlBMVEX/Zmb///+lpaVCQkK9TEzATU0/Pz+ioqJdJSVRICCrRERaJCSurq4zMzNUVFTMUlIeHh5OTk5paWlgYGAkJCTbWFjhWlpaWlpmKSmZmZm14r/wAAAAQ0lEQVQImWNgZGTi4+XjYWRkYBTn5uLn4hRiZJCUYAABDnYGNlYwi4WZQUAMzBIVQRJj5wCzOHkYGIVheoHmCYLNAwBfwQIRDa1rgAAAAABJRU5ErkJggg=="'></google-map-marker>
                       </template>
                     </dom-if>
                   </template>
                 </dom-repeat>
+                <google-map-marker latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]"></google-map-marker>
               </google-map>
 
             </template>
