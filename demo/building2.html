@@ -15,6 +15,7 @@
     <link rel="import" href="../../iron-selector/iron-selector.html">
     <link rel="import" href="../../google-map/google-map.html">
     <link rel="import" href="../../google-map/google-map-marker.html">
+    <link rel="import" href="../../google-map/google-map-circle.html">
     <link rel="import" href="../uva-buildings.html">
 
     <custom-style>
@@ -33,7 +34,8 @@
               <uva-buildings key="59e7aea6e85e555020cdfe4d" buildings="{{buildings}}" category="[[category]]"
                 categories="{{categories}}" loading="{{loading}}" historic="{{historic}}"
                 max-year-built="[[maxYearBuilt]]" min-year-built="[[minYearBuilt]]"
-                min-square-footage="{{minSquareFootage}}" max-square-footage="{{maxSquareFootage}}"></uva-buildings>
+                min-square-footage="{{minSquareFootage}}" max-square-footage="{{maxSquareFootage}}"
+                distance="[[distance]]" latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]"></uva-buildings>
               <uva-buildings key="59e7aea6e85e555020cdfe4d" name="ROTUNDA" building="{{rotunda}}"></uva-buildings>
 
               <h1>Listing of UVA buildings</h1>
@@ -51,7 +53,18 @@
                 <label for="year-selector">Year built:</label>
                 <paper-range-slider id="year-selector" snaps pin step='1' min='1780' max='2017' value-min="{{minYearBuilt}}" value-max="{{maxYearBuilt}}"></paper-range-slider><br>
                 <label for="historic">Historic?</label>
-                <input type="checkbox" checked="{{historic::change}}"></input>
+                <input id="historic" type="checkbox" checked="{{historic::change}}"></input><br>
+                <label for="proximity">Proximity Filter?</label>
+                <input id="proximity" type="checkbox" checked="{{proximity::change}}"></input>
+                <dom-if if="[[proximity]]" restamp>
+                  <template>
+                    <div>
+                      <label for="distance">Distance:</label>
+                      <paper-range-slider id="distance" single-slider snaps step='1' min='10' max='5000' value-max="{{distance}}"></paper-range-slider>
+                      <span>[[distance]] meters</span>
+                    </div>
+                  </template>
+                </dom-if>
               </div>
               <div style="height:200px; overflow:scroll; margin-bottom:20px;">
                 <dom-repeat items="[[buildings]]">
@@ -72,7 +85,11 @@
                     </dom-if>
                   </template>
                 </dom-repeat>
-                <google-map-marker latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]"></google-map-marker>
+                <dom-if if="[[proximity]]" restamp>
+                  <template>
+                    <google-map-marker latitude="{{rotunda.Latitude}}" longitude="{{rotunda.Longitude}}" draggable="true"></google-map-marker>
+                    <google-map-circle latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]" radius="[[distance]]"></google-map-circle>
+                  </template>
               </google-map>
 
             </template>
@@ -86,5 +103,7 @@
     app.minYearBuilt = 1780;
     app.minSquareFootage = 0;
     app.maxSquareFootage = 100000;
+    app.rotunda = undefined;
+    app.distance = 10000000;
   </script>
 </html>
