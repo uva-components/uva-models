@@ -57,11 +57,11 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
 //            computed: "_either(_loadingSensors, _loadingCategories)"
 //          },
 //
-//          /** Used for storing the sensors from ajax call (these are not filtered in any way and are not available offline) */
-//          _sensors: {
-//            type: Array,
-//            value: function(){return [];}
-//          },
+          /** Used for storing the sensors from ajax call (these are not filtered in any way and are not available offline) */
+          _sensors: {
+            type: Array,
+            value: function(){return [];}
+          },
 //
 //          /** Used for storing the persisted version of the sensors (this are not filtered in any way BUT are available offline if alreay cached) */
 //          _persistedSensors: {
@@ -161,12 +161,12 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
 //            observer: "_filterSensors"
 //          },
 //
-//          /** Used to maintain the url used to fetch sensors via ajax. */
-//          _sensorsURL: {
-//            type: String,
-//            computed: "_makeSensorsURL(name, id, _sensors)",
-//            notify: true
-//          },
+          /** Used to maintain the url used to fetch sensors via ajax. */
+          _sensorsURL: {
+            type: String,
+            computed: "_makeSensorsURL(name, _sensors)",
+            notify: true
+          },
 //
 //          /** Used to maintain the url used to fetch categories via ajax. */
 //          _categoriesURL: {
@@ -247,12 +247,10 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
        * @param {String} id The id of the building to return.
        * @return {String} The url to use to get the json from the Sensors API.
        */
-      _makeSensorsURL(name, id) {
+      _makeSensorsURL(name) {
         console.log('burl');
         var url = "https://api.library.virginia.edu/devhub/";
-        if (id) {
-          url += "buildingId/"+id;
-        } else if (name) {
+        if (name) {
           url += "sensors/"+name;
         } else {
           url += "sensors";

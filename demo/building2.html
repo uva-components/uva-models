@@ -13,6 +13,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../paper-range-slider/paper-range-slider.html">
     <link rel="import" href="../../iron-selector/iron-selector.html">
+    <link rel="import" href="../../iron-list/iron-list.html">
     <link rel="import" href="../../google-map/google-map.html">
     <link rel="import" href="../../google-map/google-map-marker.html">
     <link rel="import" href="../../google-map/google-map-circle.html">
@@ -68,11 +69,11 @@
                 </dom-if>
               </div>
               <div style="height:200px; overflow:scroll; margin-bottom:20px;">
-                <dom-repeat items="[[buildings]]">
+                <iron-list items="[[buildings]]" as="item" selection-enabled selected-item="{{selected}}">
                   <template>
-                    <div><strong>[[item.Name]]</strong> [[item.Address]]</div>
+                      <div tabindex$="[[tabIndex]]"><strong>[[item.Name]]</strong> [[item.Address]]</div>
                   </template>
-                </dom-repeat>
+                </iron-list>
               </div>
 
 
@@ -81,7 +82,7 @@
                   <template>
                     <dom-if if="[[item.Latitude]]">
                       <template>
-                        <google-map-marker latitude="[[item.Latitude]]" longitude="[[item.Longitude]]" title="[[item.Name]]" icon='"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAMAAADXT/YiAAAATlBMVEX/Zmb///+lpaVCQkK9TEzATU0/Pz+ioqJdJSVRICCrRERaJCSurq4zMzNUVFTMUlIeHh5OTk5paWlgYGAkJCTbWFjhWlpaWlpmKSmZmZm14r/wAAAAQ0lEQVQImWNgZGTi4+XjYWRkYBTn5uLn4hRiZJCUYAABDnYGNlYwi4WZQUAMzBIVQRJj5wCzOHkYGIVheoHmCYLNAwBfwQIRDa1rgAAAAABJRU5ErkJggg=="'></google-map-marker>
+                        <google-map-marker id="marker-[[item.ID]]" latitude="[[item.Latitude]]" longitude="[[item.Longitude]]" title="[[item.Name]]" icon='"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAMAAADXT/YiAAAATlBMVEX/Zmb///+lpaVCQkK9TEzATU0/Pz+ioqJdJSVRICCrRERaJCSurq4zMzNUVFTMUlIeHh5OTk5paWlgYGAkJCTbWFjhWlpaWlpmKSmZmZm14r/wAAAAQ0lEQVQImWNgZGTi4+XjYWRkYBTn5uLn4hRiZJCUYAABDnYGNlYwi4WZQUAMzBIVQRJj5wCzOHkYGIVheoHmCYLNAwBfwQIRDa1rgAAAAABJRU5ErkJggg=="'></google-map-marker>
                       </template>
                     </dom-if>
                   </template>
@@ -100,11 +101,15 @@
     </div>
   </body>
   <script>
+    var app = document.querySelector('#app');
     app.maxYearBuilt = 2017;
     app.minYearBuilt = 1780;
     app.minSquareFootage = 0;
     app.maxSquareFootage = 100000;
     app.rotunda = undefined;
     app.distance = 10000000;
+    app.addEventListener('selected-changed', function () {
+      console.log('change listener fired');
+    });
   </script>
 </html>
