@@ -196,29 +196,29 @@
         this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
             Polymer.Async.timeOut.after(25),
             () => {
-        // A bit crude, but it gets err done
-        var buildings = this._persistedBuildings;
-        if (this.category) buildings = buildings.filter((bl) => bl.Category.toLowerCase() == this.category.toLowerCase() );
-        if (this.minSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage >= this.minSquareFootage );
-        if (this.maxSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage <= this.maxSquareFootage );
-        if (this.minYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt >= this.minYearBuilt );
-        if (this.maxYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt <= this.maxYearBuilt );
-        if (this.historic) buildings = buildings.filter((bl) => bl.Historic == "Y");
-        if (this.latitude && this.longitude) {
-          // add a distance property to the buildings
-          buildings.forEach(function(bl){
-            if (bl.Latitude && bl.Longitude) {
-              bl.distance = this._distance(bl.Latitude,bl.Longitude,this.latitude,this.longitude);
-            }
-            if (this.distance) buildings = buildings.filter((b) => b.distance && b.distance <= this.distance);
-          });
-        }
-        this.set('buildings', buildings);
-            });
+              // A bit crude, but it gets err done
+              var buildings = this._persistedBuildings;
+              if (this.category) buildings = buildings.filter((bl) => bl.Category.toLowerCase() == this.category.toLowerCase() );
+              if (this.minSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage >= this.minSquareFootage );
+              if (this.maxSquareFootage) buildings = buildings.filter((bl) => bl.SquareFootage <= this.maxSquareFootage );
+              if (this.minYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt >= this.minYearBuilt );
+              if (this.maxYearBuilt) buildings = buildings.filter((bl) => bl.YearBuilt <= this.maxYearBuilt );
+              if (this.historic) buildings = buildings.filter((bl) => bl.Historic == "Y");
+              if (this.latitude && this.longitude) {
+                // add a distance property to the buildings
+                buildings.forEach(function(bl){
+                  if (bl.Latitude && bl.Longitude) {
+                    bl.distance = this._distance(bl.Latitude,bl.Longitude,this.latitude,this.longitude);
+                  }
+                }.bind(this));
+                if (this.distance) buildings = buildings.filter((b) => b.distance>=0 && b.distance <= this.distance);
+              }
+              this.set('buildings', buildings);
+            } );
       }
 
       /**
-       * Gets the distance in km between two lat/long sets.
+       * Gets the distance in m between two lat/long sets.
        *
        * @param {Number} lat1 The latitude of the first point.
        * @param {Number} lon1 The longitude of the first point.
@@ -227,13 +227,10 @@
        * @return {Number} The distance in km between the two points.
        */
       _distance(lat1, lon1, lat2, lon2) {
-        var p = 0.017453292519943295;    // Math.PI / 180
-        var c = Math.cos;
-        var a = 0.5 - c((lat2 - lat1) * p)/2 +
-                c(lat1 * p) * c(lat2 * p) *
-                (1 - c((lon2 - lon1) * p))/2;
-
-        return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+        return (lat1==lat2&&lon1==lon2)?
+              0:
+              google.maps.geometry.spherical.computeDistanceBetween(
+                new google.maps.LatLng(lat1, lon1), new google.maps.LatLng(lat2, lon2));
       }
 
       /**
