@@ -49,7 +49,8 @@
                   </dom-repeat>
                 </select><br />
                 <label for="year-selector">Square Footage:</label>
-                <paper-range-slider id="square-footage" snaps pin step='1' min='0' max='100000' value-min="{{minSquareFootage}}" value-max="{{maxSquareFootage}}"></paper-range-slider><br>
+                <paper-range-slider id="square-footage" snaps step='1' min='0' max='100000' value-min="{{minSquareFootage}}" value-max="{{maxSquareFootage}}"></paper-range-slider><br>
+                <span>[[minSquareFootage]]-[[maxSquareFootage]] ft²</span><br>
                 <label for="year-selector">Year built:</label>
                 <paper-range-slider id="year-selector" snaps pin step='1' min='1780' max='2017' value-min="{{minYearBuilt}}" value-max="{{maxYearBuilt}}"></paper-range-slider><br>
                 <label for="historic">Historic?</label>
