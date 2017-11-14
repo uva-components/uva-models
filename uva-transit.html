@@ -1,0 +1,162 @@
+sensors<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../polymer/lib/utils/debounce.html">
+
+<dom-module id="uva-transit">
+  <template>
+    <iron-ajax id="stops" auto url="[[_stopsURL]]" handle-as="json" last-response="{{_stops}}" loading="{{loadingStops}}">
+    <app-indexeddb-mirror key="busStops" data="[[_stops]]" persisted-data="{{_persistedStops}}"></app-indexeddb-mirror>
+  </template>
+  <script>
+    /**
+     * `uva-transit`
+     * Helper component to bind to the UVA transit API endpoints.
+     * This API provides information about UTS Bus stops, routes, and buses.
+     *
+     * Example:
+     *
+     *    <uva-transit stops="{{stops}}"></uva-transit>
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/simple-transit.html Map bind demo
+     */
+    class UvaTransit extends Polymer.Element {
+      static get is() { return 'uva-transit'; }
+      static get properties() {
+        return {
+
+          /** True while stops ajax request is in flight */
+          loadingStops: {
+            type: Boolean,
+            value: false
+          },
+
+          /** True while API requests are in flight */
+          loading: {
+            type: Boolean,
+            computed: "_either(_loadingStops)"
+          },
+
+          /** Used for storing the stops from ajax call (these are not filtered in any way and are not available offline) */
+          _stops: {
+            type: Object,
+            value: function(){return {};}
+          },
+
+          /** Used for storing the persisted version of the stops (this are not filtered in any way BUT are available offline if alreay cached) */
+          _persistedStops: {
+            type: Object,
+            value: function(){return {};},
+            observer: "_processStops"
+          },
+
+          /** Used for storing the full list of stops that have been persisted */
+          stops: {
+            type: Object,
+            value: function(){return {};},
+            notify: true
+          },
+
+          /** Used for storing the full list of routes that have been persisted */
+          routes: {
+            type: Object,
+            value: function(){return {};},
+            notify: true
+          },
+
+          /** UVA UTS bus stops filtered by attributes */
+          filteredStops: {
+            type: Array,
+            computed: '_filterStops(stops.*)',
+            notify: true
+          },
+
+          /** UVA UTS bus routes filtered by attributes */
+          filteredRoutes: {
+            type: Array,
+            computed: '_filterRoutes(routes.*)',
+            notify: true
+          },
+
+          /** Used to maintain the url used to fetch stops via ajax. */
+          _stopsURL: {
+            type: String,
+            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/bus-stops",
+          }
+
+        };
+      }
+      ready() {
+        super.ready();
+      }
+
+      /**
+       * Parses raw stops data and populates `stops` and `routes` with datapoints
+       */
+      _processStops() {
+        this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
+            Polymer.Async.timeOut.after(200),
+            () => {
+              if (this._persistedStops.routes) {
+                this._persistedStops.routes.forEach((route)=>{
+                  let routePath = 'routes.'+route.id;
+                  (this.routes[route.id] || this.set(routePath,{}) );
+                  (route.stops && this.set(routePath+'.stops',route.stops) );
+                });
+              }
+              if (this._persistedStops.stops) {
+                this._persistedStops.stops.forEach((stop)=>{
+                  let stopPath = "stops."+stop.id;
+                  (this.stops[stop.id] || this.set(stopPath,{}) );
+                  (stop.name && this.set(stopPath+'.name', stop.name) );
+                  (stop.position && this.set(stopPath+'.latitude', stop.position[0]) || this.set(stopPath+'.longitude', stop.position[1]) );
+                });
+              }
+            } );
+      }
+
+      /**
+       * Gets the distance in km between two lat/long sets.
+       *
+       * @param {Number} lat1 The latitude of the first point.
+       * @param {Number} lon1 The longitude of the first point.
+       * @param {Number} lat2 The latitude of the second point.
+       * @param {Number} lon2 The longitude of the second point.
+       * @return {Number} The distance in km between the two points.
+       */
+      _distance(lat1, lon1, lat2, lon2) {
+        var p = 0.017453292519943295;    // Math.PI / 180
+        var c = Math.cos;
+        var a = 0.5 - c((lat2 - lat1) * p)/2 +
+                c(lat1 * p) * c(lat2 * p) *
+                (1 - c((lon2 - lon1) * p))/2;
+
+        return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
+      }
+
+      /**
+       * Returns true if either parameter is truthy
+       *
+       * @param b1 First value to evaluate
+       * @param b2 Second value to evaluate
+       * @return {Boolean} true if either parameter is truthy
+       */
+      _either(b1, b2) {
+        return (b1 || b2);
+      }
+
+      _filterRoutes(routes) {
+        return Object.values(this.routes);
+      }
+
+      _filterStops(stops) {
+        return Object.values(this.stops);
+      }
+
+    }
+
+    window.customElements.define(UvaTransit.is, UvaTransit);
+  </script>
+</dom-module>
