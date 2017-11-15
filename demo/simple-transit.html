@@ -18,7 +18,6 @@
     <link rel="import" href="../../google-map/google-map-marker.html">
     <link rel="import" href="../../google-map/google-map-circle.html">
     <link rel="import" href="../uva-transit.html">
-    <link rel="import" href="../uva-buildings.html">
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
@@ -33,16 +32,15 @@
           <dom-bind id="app">
             <template>
 
-              <uva-transit filtered-stops="{{stops}}"></uva-transit>
-              <uva-buildings name="ROTUNDA" building="{{rotunda}}"></uva-buildings>
+              <uva-transit filtered-stops="{{stops}}" filtered-routes="{{routes}}"></uva-transit>
 
               <h1>Listing of UVA UTS Bus stops</h1>
-              <google-map style="height:600px;" zoom="14" latitude="[[rotunda.Latitude]]" longitude="[[rotunda.Longitude]]" api-key="AIzaSyBxAaVYnYIkwmvR4pigOojpxvli_OxBeFs">
+              <google-map style="height:600px;" zoom="14" latitude="38.0356" longitude="-78.5034" api-key="AIzaSyBxAaVYnYIkwmvR4pigOojpxvli_OxBeFs">
                 <dom-repeat items="[[stops]]">
                   <template>
                     <dom-if if="[[item.latitude]]">
                       <template>
-                        <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.name]]" icon='"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAMAAADXT/YiAAAATlBMVEX/Zmb///+lpaVCQkK9TEzATU0/Pz+ioqJdJSVRICCrRERaJCSurq4zMzNUVFTMUlIeHh5OTk5paWlgYGAkJCTbWFjhWlpaWlpmKSmZmZm14r/wAAAAQ0lEQVQImWNgZGTi4+XjYWRkYBTn5uLn4hRiZJCUYAABDnYGNlYwi4WZQUAMzBIVQRJj5wCzOHkYGIVheoHmCYLNAwBfwQIRDa1rgAAAAABJRU5ErkJggg=="'></google-map-marker>
+                        <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.name]]" icon='{{getCircleIcon()}}'></google-map-marker>
                       </template>
                     </dom-if>
                   </template>
@@ -57,5 +55,14 @@
   </body>
   <script>
     var app = document.querySelector('#app');
+    app.getCircleIcon = function(){
+      if (!window.circleIcon) {
+        window.circleIcon = {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 3
+        }
+      }
+      return window.circleIcon;
+    };
   </script>
 </html>

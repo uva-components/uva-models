@@ -5,8 +5,15 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
 
 <dom-module id="uva-transit">
   <template>
+    <!-- get some bus stops! -->
     <iron-ajax id="stops" auto url="[[_stopsURL]]" handle-as="json" last-response="{{_stops}}" loading="{{loadingStops}}">
     <app-indexeddb-mirror key="busStops" data="[[_stops]]" persisted-data="{{_persistedStops}}"></app-indexeddb-mirror>
+    <!-- get some bus routes! -->
+    <iron-ajax id="routes" auto url="[[_routesURL]]" handle-as="json" last-response="{{_routes}}" loading="{{loadingRoutes}}">
+    <app-indexeddb-mirror key="busRoutes" data="[[_routes]]" persisted-data="{{_persistedRoutes}}"></app-indexeddb-mirror>
+    <!-- get some bus announcements -->
+    <iron-ajax id="announcements" auto url="[[_announcementsURL]]" handle-as="json" last-response="{{_announcements}}" loading="{{loadingAnnouncements}}">
+    <app-indexeddb-mirror key="busAnnouncements" data="[[_announcements]]" persisted-data="{{announcements}}"></app-indexeddb-mirror>
   </template>
   <script>
     /**
@@ -33,14 +40,38 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
             value: false
           },
 
+          /** True while routes ajax request is in flight */
+          loadingRoutes: {
+            type: Boolean,
+            value: false
+          },
+
+          /** True while routes ajax request is in flight */
+          loadingAnnouncements: {
+            type: Boolean,
+            value: false
+          },
+
           /** True while API requests are in flight */
           loading: {
             type: Boolean,
-            computed: "_either(_loadingStops)"
+            computed: "_either(loadingStops, loadingRoutes, loadingAnnouncements)"
           },
 
           /** Used for storing the stops from ajax call (these are not filtered in any way and are not available offline) */
           _stops: {
+            type: Object,
+            value: function(){return {};}
+          },
+
+          /** Used for storing the routes from ajax call (these are not filtered in any way and are not available offline) */
+          _routes: {
+            type: Object,
+            value: function(){return {};}
+          },
+
+          /** Used for storing the announcements from ajax call (these are not filtered in any way and are not available offline) */
+          _announcements: {
             type: Object,
             value: function(){return {};}
           },
@@ -52,6 +83,13 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
             observer: "_processStops"
           },
 
+          /** Used for storing the persisted version of the routes (this are not filtered in any way BUT are available offline if alreay cached) */
+          _persistedRoutes: {
+            type: Object,
+            value: function(){return {};},
+            observer: "_processRoutes"
+          },
+
           /** Used for storing the full list of stops that have been persisted */
           stops: {
             type: Object,
@@ -61,6 +99,13 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
 
           /** Used for storing the full list of routes that have been persisted */
           routes: {
+            type: Object,
+            value: function(){return {};},
+            notify: true
+          },
+
+          /** Used for storing the full list of announcements that have been persisted */
+          announcements: {
             type: Object,
             value: function(){return {};},
             notify: true
@@ -84,6 +129,18 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
           _stopsURL: {
             type: String,
             value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/bus-stops",
+          },
+
+          /** Used to maintain the url used to fetch routes via ajax. */
+          _routesURL: {
+            type: String,
+            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/routes",
+          },
+
+          /** Used to maintain the url used to fetch announcements via ajax. */
+          _announcementsURL: {
+            type: String,
+            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/announcements",
           }
 
         };
@@ -101,7 +158,7 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
             () => {
               if (this._persistedStops.routes) {
                 this._persistedStops.routes.forEach((route)=>{
-                  let routePath = 'routes.'+route.id;
+                  let routePath = "routes."+route.id;
                   (this.routes[route.id] || this.set(routePath,{}) );
                   (route.stops && this.set(routePath+'.stops',route.stops) );
                 });
@@ -112,6 +169,25 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
                   (this.stops[stop.id] || this.set(stopPath,{}) );
                   (stop.name && this.set(stopPath+'.name', stop.name) );
                   (stop.position && this.set(stopPath+'.latitude', stop.position[0]) || this.set(stopPath+'.longitude', stop.position[1]) );
+                });
+              }
+            } );
+      }
+
+      /**
+       * Parses raw routes data and populates `routes` with datapoints
+       */
+      _processRoutes() {
+        this._routeDebouncer = Polymer.Debouncer.debounce(this._routeDebouncer,
+            Polymer.Async.timeOut.after(200),
+            () => {
+              if (this._persistedRoutes.routes) {
+                this._persistedRoutes.routes.forEach((route)=>{
+                  let routePath = "routes."+route.id;
+                  (this.routes[route.id] || this.set(routePath,{}) );
+                  (route.bounds && this.set(routePath+'.bounds',route.bounds) );
+                  (route.is_active && this.set(routePath+'.active',route.is_active) );
+                  (route.long_name && this.set(routePath+'.name',route.long_name) );
                 });
               }
             } );
@@ -141,10 +217,11 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
        *
        * @param b1 First value to evaluate
        * @param b2 Second value to evaluate
+       * @param b3 Third value to evaluate
        * @return {Boolean} true if either parameter is truthy
        */
-      _either(b1, b2) {
-        return (b1 || b2);
+      _either(b1, b2, b3) {
+        return (b1 || b2 || b3);
       }
 
       _filterRoutes(routes) {
