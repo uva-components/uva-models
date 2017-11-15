@@ -1,4 +1,4 @@
-sensors<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../polymer/lib/utils/debounce.html">
@@ -13,7 +13,9 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
     <app-indexeddb-mirror key="busRoutes" data="[[_routes]]" persisted-data="{{_persistedRoutes}}"></app-indexeddb-mirror>
     <!-- get some bus announcements -->
     <iron-ajax id="announcements" auto url="[[_announcementsURL]]" handle-as="json" last-response="{{_announcements}}" loading="{{loadingAnnouncements}}">
-    <app-indexeddb-mirror key="busAnnouncements" data="[[_announcements]]" persisted-data="{{announcements}}"></app-indexeddb-mirror>
+    <app-indexeddb-mirror key="busAnnouncements" data="[[_announcements]]" persisted-data="{{_persistedAnnouncements}}"></app-indexeddb-mirror>
+    <!-- get some buses! -->
+    <iron-ajax id="buses" auto url="[[_busesURL]]" handle-as="json" last-response="{{_buses}}" loading="{{loadingBuses}}" on-response="_startAuto">
   </template>
   <script>
     /**
@@ -52,10 +54,29 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
             value: false
           },
 
+          /** True while routes ajax request is in flight */
+          loadingBuses: {
+            type: Boolean,
+            value: false
+          },
+
+          /** If true will poll the buses feed to update bus locations */
+          auto: {
+            type: Boolean,
+            value: false,
+            observer: "_startAuto"
+          },
+
+          /** Delay between request to update bus locations when `auto` is set */
+          delay: {
+            type: Number,
+            value: 2000
+          },
+
           /** True while API requests are in flight */
           loading: {
             type: Boolean,
-            computed: "_either(loadingStops, loadingRoutes, loadingAnnouncements)"
+            computed: "_either(loadingStops, loadingRoutes, loadingAnnouncements, loadingBuses)"
           },
 
           /** Used for storing the stops from ajax call (these are not filtered in any way and are not available offline) */
@@ -76,6 +97,12 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
             value: function(){return {};}
           },
 
+          /** Used for storing the buses from ajax call (these are not filtered in any way and are not available offline) */
+          _buses: {
+            type: Object,
+            value: function(){return {};}
+          },
+
           /** Used for storing the persisted version of the stops (this are not filtered in any way BUT are available offline if alreay cached) */
           _persistedStops: {
             type: Object,
@@ -88,6 +115,12 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
             type: Object,
             value: function(){return {};},
             observer: "_processRoutes"
+          },
+
+          /** Used for storing the persisted version of the routes (this are not filtered in any way BUT are available offline if alreay cached) */
+          _persistedAnnouncements: {
+            type: Object,
+            value: function(){return {};}
           },
 
           /** Used for storing the full list of stops that have been persisted */
@@ -104,10 +137,17 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
             notify: true
           },
 
-          /** Used for storing the full list of announcements that have been persisted */
+          /** Used for storing the list of UVA UTS announcements */
           announcements: {
-            type: Object,
-            value: function(){return {};},
+            type: Array,
+            computed: "_getAnnouncements(_persistedAnnouncements)",
+            notify: true
+          },
+
+          /** Used for storing the list of UVA UTS buses and their locations */
+          buses: {
+            type: Array,
+            computed: "_getBuses(_buses)",
             notify: true
           },
 
@@ -141,12 +181,29 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
           _announcementsURL: {
             type: String,
             value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/announcements",
+          },
+
+          /** Used to maintain the url used to fetch buses via ajax. */
+          _busesURL: {
+            type: String,
+            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/vehicles",
           }
 
         };
       }
       ready() {
         super.ready();
+//        this.startAuto();
+      }
+
+      _startAuto() {
+        if (this.auto && !this._timeout) {
+          this._timeout = setTimeout(function(){
+            console.log('issue a new request for buses!')
+            this.shadowRoot.querySelector('#buses').generateRequest();
+            this._timeout = null;
+          }.bind(this),this.delay)
+        }
       }
 
       /**
@@ -172,6 +229,22 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
                 });
               }
             } );
+      }
+
+      _getAnnouncements(announcements) {
+        if (announcements.announcements && announcements.announcements.length>0) {
+          this.dispatchEvent(new CustomEvent('new-announcement', {}));
+          return announcements.announcements;
+        }
+        return [];
+      }
+
+      _getBuses(buses) {
+        if (buses.vehicles && buses.vehicles.length>0) {
+          this.dispatchEvent(new CustomEvent('buses-refresh', {}));
+          return buses.vehicles;
+        }
+        return [];
       }
 
       /**
@@ -218,10 +291,11 @@ sensors<link rel="import" href="../polymer/polymer-element.html">
        * @param b1 First value to evaluate
        * @param b2 Second value to evaluate
        * @param b3 Third value to evaluate
+       * @param b4 Fourth value to evaluate
        * @return {Boolean} true if either parameter is truthy
        */
-      _either(b1, b2, b3) {
-        return (b1 || b2 || b3);
+      _either(b1, b2, b3, b4) {
+        return (b1 || b2 || b3 || b4);
       }
 
       _filterRoutes(routes) {
