@@ -100,7 +100,8 @@
           /** Used for storing the buses from ajax call (these are not filtered in any way and are not available offline) */
           _buses: {
             type: Object,
-            value: function(){return {};}
+            value: function(){return {};},
+            observer: "_getBuses"
           },
 
           /** Used for storing the persisted version of the stops (this are not filtered in any way BUT are available offline if alreay cached) */
@@ -147,7 +148,7 @@
           /** Used for storing the list of UVA UTS buses and their locations */
           buses: {
             type: Array,
-            computed: "_getBuses(_buses)",
+            value: function(){return [];},
             notify: true
           },
 
@@ -187,19 +188,23 @@
           _busesURL: {
             type: String,
             value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/vehicles",
+          },
+
+          /** Used to maintain the url used to fetch buses via ajax. */
+          _segmentsURL: {
+            type: String,
+            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/segments",
           }
 
         };
       }
       ready() {
         super.ready();
-//        this.startAuto();
       }
 
       _startAuto() {
         if (this.auto && !this._timeout) {
           this._timeout = setTimeout(function(){
-            console.log('issue a new request for buses!')
             this.shadowRoot.querySelector('#buses').generateRequest();
             this._timeout = null;
           }.bind(this),this.delay)
@@ -239,12 +244,28 @@
         return [];
       }
 
-      _getBuses(buses) {
-        if (buses.vehicles && buses.vehicles.length>0) {
-          this.dispatchEvent(new CustomEvent('buses-refresh', {}));
-          return buses.vehicles;
+      _cleanupBus(bus) {
+        let b = (({current_stop_id,heading,id,route_id,segment_id,speed,timestamp})=>({current_stop_id,heading,id,route_id,segment_id,speed,timestamp}))(bus);
+        if (this.routes) {
+          b.routeName = this.routes[parseInt(b.route_id)].name;
         }
-        return [];
+        b.latitude = (bus.position[0])? bus.position[0]:null;
+        b.longitude = (bus.position[1])? bus.position[1]:null;
+        return b;
+      }
+
+      _getBuses() {
+        if (this._buses && this._buses.vehicles && this._buses.vehicles.length>0) {
+          this._buses.vehicles.forEach((bus)=>{
+            let index = this.buses.findIndex((b)=>{return (b.id==bus.id)});
+            if (index==-1) {
+              this.push('buses',this._cleanupBus(bus));
+            } else {
+              this.set('buses.'+index,this._cleanupBus(bus));
+            }
+          });
+          this.dispatchEvent(new CustomEvent('buses-refresh', {}));
+        }
       }
 
       /**

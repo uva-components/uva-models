@@ -35,7 +35,7 @@
           <dom-bind id="app">
             <template>
 
-              <uva-transit auto filtered-stops="{{stops}}" routes="{{routes}}" announcements="{{announcements}}" buses="{{buses}}" on-new-announcement="openAnnouncement" on-buses-refresh="busRefresh"></uva-transit>
+              <uva-transit auto filtered-stops="{{stops}}" routes="{{routes}}" announcements="{{announcements}}" buses="{{buses}}" on-new-announcement="openAnnouncement"></uva-transit>
 
               <h1>Listing of UVA UTS Bus stops</h1>
               <google-map id="gmap" style="height:600px;" zoom="14" latitude="38.0356" longitude="-78.5034" api-key="AIzaSyBxAaVYnYIkwmvR4pigOojpxvli_OxBeFs">
@@ -43,9 +43,14 @@
                   <template>
                     <dom-if if="[[item.latitude]]">
                       <template>
-                        <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.name]]" icon='{{getCircleIcon()}}'></google-map-marker>
+                        <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.name]]" icon='[[getCircleIcon()]]'></google-map-marker>
                       </template>
                     </dom-if>
+                  </template>
+                </dom-repeat>
+                <dom-repeat items="[[buses]]">
+                  <template>
+                    <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.routeName]]" icon='[[getBusIcon(item.heading)]]'></google-map-marker>
                   </template>
                 </dom-repeat>
               </google-map>
@@ -93,7 +98,7 @@
           rotation: rotate-90
         }
 
-      return JSON.stringify(busIcon);
+      return busIcon;
     };
 
     app.openAnnouncement = function(){
@@ -101,23 +106,6 @@
         document.querySelector('paper-dialog').open();
       },3000);
     }
-    app.busRefresh = function(){
-      var map = document.querySelector('#gmap');
-      if (app.buses) {
-        app.buses.forEach((bus)=>{
-          let marker = map.querySelector('#bus-'+bus.id);
-          if (!marker) {
-            // create a marker for the bus
-            marker = document.createElement("google-map-marker");
-            marker.id = 'bus-'+bus.id;
-            map.appendChild(marker);
-          }
-          marker.setAttribute('latitude', bus.position[0]);
-          marker.setAttribute('longitude', bus.position[1]);
-          marker.setAttribute('title', app.routes[parseInt(bus.route_id)].name);
-          marker.setAttribute('icon', app.getBusIcon(bus.heading));
-        });
-      }
-    }
+
   </script>
 </html>
