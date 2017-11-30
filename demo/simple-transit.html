@@ -16,16 +16,21 @@
     <link rel="import" href="../../iron-list/iron-list.html">
     <link rel="import" href="../../google-map/google-map.html">
     <link rel="import" href="../../google-map/google-map-marker.html">
+    <link rel="import" href="../../google-map/google-map-poly.html">
+    <link rel="import" href="../../google-map/google-map-point.html">
     <link rel="import" href="../../google-map/google-map-circle.html">
     <link rel="import" href="../../paper-dialog/paper-dialog.html">
     <link rel="import" href="../../paper-dialog-scrollable/paper-dialog-scrollable.html">
     <link rel="import" href="../../marked-element/marked-element.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
     <link rel="import" href="../uva-transit.html">
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
       </style>
     </custom-style>
+
   </head>
   <body>
     <div class="vertical-section-container centered">
@@ -35,9 +40,10 @@
           <dom-bind id="app">
             <template>
 
-              <uva-transit auto filtered-stops="{{stops}}" routes="{{routes}}" announcements="{{announcements}}" buses="{{buses}}" on-new-announcement="openAnnouncement"></uva-transit>
+              <uva-transit auto filtered-stops="{{stops}}" routes="{{routes}}" segments="{{segments}}" announcements="{{announcements}}" buses="{{buses}}" on-new-announcement="openAnnouncement"></uva-transit>
 
               <h1>Listing of UVA UTS Bus stops</h1>
+
               <google-map id="gmap" style="height:600px;" zoom="14" latitude="38.0356" longitude="-78.5034" api-key="AIzaSyBxAaVYnYIkwmvR4pigOojpxvli_OxBeFs">
                 <dom-repeat items="[[stops]]">
                   <template>
@@ -51,6 +57,17 @@
                 <dom-repeat items="[[buses]]">
                   <template>
                     <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.routeName]]" icon='[[getBusIcon(item.heading)]]'></google-map-marker>
+                  </template>
+                </dom-repeat>
+                <dom-repeat items="[[segments]]">
+                  <template>
+                    <google-map-poly>
+                      <dom-repeat items="[[item.points]]">
+                        <template>
+                          <google-map-point latitude="[[item.lat]]" longitude="[[item.lng]]"></google-map-point>
+                        </template>
+                      </dom-repeat>
+                    </google-map-poly>
                   </template>
                 </dom-repeat>
               </google-map>
@@ -88,6 +105,7 @@
       }
       return window.circleIcon;
     };
+
     app.getBusIcon = function(rotate){
 
         let busIcon = {

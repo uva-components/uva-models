@@ -11,6 +11,9 @@
     <!-- get some bus routes! -->
     <iron-ajax id="routes" auto url="[[_routesURL]]" handle-as="json" last-response="{{_routes}}" loading="{{loadingRoutes}}">
     <app-indexeddb-mirror key="busRoutes" data="[[_routes]]" persisted-data="{{_persistedRoutes}}"></app-indexeddb-mirror>
+    <!-- get some route path segments! -->
+    <iron-ajax id="segments" auto url="[[_segmentsURL]]" handle-as="json" last-response="{{_segments}}" loading="{{loadingSegments}}">
+    <app-indexeddb-mirror key="routeSegments" data="[[_segments]]" persisted-data="{{_persistedSegments}}"></app-indexeddb-mirror>
     <!-- get some bus announcements -->
     <iron-ajax id="announcements" auto url="[[_announcementsURL]]" handle-as="json" last-response="{{_announcements}}" loading="{{loadingAnnouncements}}">
     <app-indexeddb-mirror key="busAnnouncements" data="[[_announcements]]" persisted-data="{{_persistedAnnouncements}}"></app-indexeddb-mirror>
@@ -91,6 +94,12 @@
             value: function(){return {};}
           },
 
+          /** Used for storing the segments from ajax call (these are not filtered in any way and are not available offline) */
+          _segments: {
+            type: Object,
+            value: function(){return {};}
+          },
+
           /** Used for storing the announcements from ajax call (these are not filtered in any way and are not available offline) */
           _announcements: {
             type: Object,
@@ -118,6 +127,13 @@
             observer: "_processRoutes"
           },
 
+          /** Used for storing the persisted version of the segments (this are not filtered in any way BUT are available offline if alreay cached) */
+          _persistedSegments: {
+            type: Object,
+            value: function(){return {};},
+            observer: "_processSegments"
+          },
+
           /** Used for storing the persisted version of the routes (this are not filtered in any way BUT are available offline if alreay cached) */
           _persistedAnnouncements: {
             type: Object,
@@ -135,6 +151,13 @@
           routes: {
             type: Object,
             value: function(){return {};},
+            notify: true
+          },
+
+          /** Used for storing the full list of route segments that have been persisted */
+          segments: {
+            type: Array,
+            value: function(){return [];},
             notify: true
           },
 
@@ -283,6 +306,34 @@
                   (route.is_active && this.set(routePath+'.active',route.is_active) );
                   (route.long_name && this.set(routePath+'.name',route.long_name) );
                 });
+              }
+            } );
+      }
+
+      /**
+       * Parses raw route segment data and populates `routes` and `segments`
+       */
+      _processSegments() {
+        this._segmentDebouncer = Polymer.Debouncer.debounce(this._segmentDebouncer,
+            Polymer.Async.timeOut.after(200),
+            () => {
+              // assign the segment ids to the routes
+              if (this._persistedSegments.routes) {
+                this._persistedSegments.routes.forEach((route)=>{
+                  let routePath = "routes."+route.id;
+                  (this.routes[route.id] || this.set(routePath,{}) );
+                  (route.segments && this.set(routePath+'.segments', route.segments.filter((seg)=>seg>0) ) );
+                });
+              }
+              // get the segments (ignoring levels for now)
+              if (this._persistedSegments.segments) {
+                var listing = [];
+                this._persistedSegments.segments.forEach((segment)=>{
+                  listing.push( { id:segment.id,
+                                  points:google.maps.geometry.encoding.decodePath(segment.points).map((p)=>{return {lat:p.lat(),lng:p.lng()}; })
+                                });//google.maps.geometry.encoding.decodePath(segment.points).map((p)=>{return {lat:p.lat(),lng:p.lng()}; }) );
+                });
+                this.set('segments',listing);
               }
             } );
       }
