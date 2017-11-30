@@ -56,7 +56,7 @@
                 </dom-repeat>
                 <dom-repeat items="[[buses]]">
                   <template>
-                    <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.routeName]]" icon='[[getBusIcon(item.heading)]]'></google-map-marker>
+                    <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="[[item.routeName]]"></google-map-marker>
                   </template>
                 </dom-repeat>
                 <dom-repeat items="[[segments]]">
