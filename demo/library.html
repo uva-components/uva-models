@@ -51,6 +51,26 @@
           </dom-bind>
         </template>
       </demo-snippet>
+
+      <h3>Basic uva-library demo for Files</h3>
+      <demo-snippet>
+        <template>
+
+          <dom-bind id="app">
+            <template>
+              <uva-library path="files" last-response="{{response}}"></uva-library>
+              <ul>
+                <dom-repeat items="{{response}}">
+                  <template>
+                    <li>{{item.filename}}</li>
+                  </template>
+                </dom-repeat>
+              </ul>
+            </template>
+          </dom-bind>
+
+        </template>
+      </demo-snippet>
     </div>
   </body>
 </html>
