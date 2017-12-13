@@ -60,7 +60,7 @@
         };
       }
       _makeURL(path) {
-        return "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/library/"+path+"#";
+        return "https://api.devhub.virginia.edu/v1/library/"+path;
       }
       _makeItem(lastResponse, uuid) {
         if (this.lastResponse && this.lastResponse.length>0) {
