@@ -1,22 +1,20 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
-<link rel="import" href="../app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+
 <link rel="import" href="../polymer/lib/utils/debounce.html">
+
+<link rel="import" href="./uva-model.html">
 
 <dom-module id="uva-transit">
   <template>
     <!-- get some bus stops! -->
-    <iron-ajax id="stops" auto url="[[_stopsURL]]" handle-as="json" last-response="{{_stops}}" loading="{{loadingStops}}">
-    <app-indexeddb-mirror key="busStops" data="[[_stops]]" persisted-data="{{_persistedStops}}"></app-indexeddb-mirror>
+    <iron-ajax id="stops" auto url="[[_stopsURL]]" handle-as="json" last-response="{{_persistedStops}}" loading="{{loadingStops}}">
     <!-- get some bus routes! -->
-    <iron-ajax id="routes" auto url="[[_routesURL]]" handle-as="json" last-response="{{_routes}}" loading="{{loadingRoutes}}">
-    <app-indexeddb-mirror key="busRoutes" data="[[_routes]]" persisted-data="{{_persistedRoutes}}"></app-indexeddb-mirror>
+    <iron-ajax id="routes" auto url="[[_routesURL]]" handle-as="json" last-response="{{_persistedRoutes}}" loading="{{loadingRoutes}}">
     <!-- get some route path segments! -->
-    <iron-ajax id="segments" auto url="[[_segmentsURL]]" handle-as="json" last-response="{{_segments}}" loading="{{loadingSegments}}">
-    <app-indexeddb-mirror key="routeSegments" data="[[_segments]]" persisted-data="{{_persistedSegments}}"></app-indexeddb-mirror>
+    <iron-ajax id="segments" auto url="[[_segmentsURL]]" handle-as="json" last-response="{{_persistedSegment}}" loading="{{loadingSegments}}">
     <!-- get some bus announcements -->
-    <iron-ajax id="announcements" auto url="[[_announcementsURL]]" handle-as="json" last-response="{{_announcements}}" loading="{{loadingAnnouncements}}">
-    <app-indexeddb-mirror key="busAnnouncements" data="[[_announcements]]" persisted-data="{{_persistedAnnouncements}}"></app-indexeddb-mirror>
+    <iron-ajax id="announcements" auto url="[[_announcementsURL]]" handle-as="json" last-response="{{_persistedAnnouncements}}" loading="{{loadingAnnouncements}}">
     <!-- get some buses! -->
     <iron-ajax id="buses" auto url="[[_busesURL]]" handle-as="json" last-response="{{_buses}}" loading="{{loadingBuses}}" on-response="_startAuto">
   </template>

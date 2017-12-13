@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>uva-model demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="../uva-model.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic uva-model demo for Library Web Content Blocks</h3>
+      <demo-snippet>
+        <template>
+
+          <dom-bind id="app">
+            <template>
+              <uva-model path="library/web/blocks" last-response="{{response}}"></uva-model>
+              <ul>
+                <dom-repeat items="{{response}}">
+                  <template>
+                    <li>{{item.title}}</li>
+                  </template>
+                </dom-repeat>
+              </ul>
+            </template>
+          </dom-bind>
+        </template>
+      </demo-snippet>
+
+    </div>
+  </body>
+</html>

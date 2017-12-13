@@ -1,0 +1,58 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+
+<dom-module id="uva-model">
+  <template>
+    <style>
+      :host { display: none; }
+    </style>
+    <iron-ajax auto url="[[_url]]" handle-as="json" loading="{{loading}}" last-response="{{lastResponse}}"></iron-ajax>
+  </template>
+
+  <script>
+    /**
+     * `uva-model`
+     * Binds to the UVA APIs
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/generic.html
+     */
+    class UvaModel extends Polymer.Element {
+      static get is() { return 'uva-model'; }
+      static get properties() {
+        return {
+          /** URL used to get the content from the UVA APIs */
+          _url: {
+            type: String,
+            computed: '_makeURL(path,apiVersion)'
+          },
+          /** The API path used in the request */
+          path: {
+            type: String,
+            value: ""
+          },
+          /** True while requests are in flight to the API */
+          loading: {
+            type: Boolean,
+            notify: true,
+          },
+          /** The last response */
+          lastResponse: {
+            type: Object,
+            notify: true
+          },
+          apiVersion: {
+            type: String,
+            value: "v1"
+          }
+        };
+      }
+      _makeURL(path,apiVersion) {
+        return "https://api.devhub.virginia.edu/"+apiVersion+"/"+path;
+      }
+    }
+
+    window.customElements.define(UvaModel.is, UvaModel);
+  </script>
+</dom-module>

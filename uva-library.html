@@ -1,5 +1,5 @@
 <link rel="import" href="../polymer/polymer-element.html">
-<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="./uva-model.html">
 
 <dom-module id="uva-library">
   <template>
@@ -8,7 +8,7 @@
         display: none;
       }
     </style>
-    <iron-ajax auto url="[[_url]]" handle-as="json" loading="{{loading}}" last-response="{{lastResponse}}"></iron-ajax>
+    <uva-model path="[[_computePath(path)]]" loading="{{loading}}" last-response="{{lastResponse}}"></uva-model>
   </template>
 
   <script>
@@ -20,47 +20,28 @@
      * @polymer
      * @demo demo/library.html
      */
-    class UvaLibrary extends Polymer.Element {
+    class UvaLibrary extends UvaModel {
       static get is() { return 'uva-library'; }
       static get properties() {
-        return {
-          /** URL used to get the content from Library APIs */
-          _url: {
-            type: String,
-            computed: '_makeURL(path)'
-          },
-          /** The API path used in the request */
-          path: {
-            type: String,
-            value: ""
-          },
-          /** True while requests are in flight to the API */
-          loading: {
-            type: Boolean,
-            notify: true,
-          },
-          /** The last response */
-          lastResponse: {
-            type: Object,
-            notify: true
-          },
-          /**
-            If `uuid` is set will return an item from the result set that matches or null.
-            When `uuid` is not set, will simply return the first item from the list of results
-          */
-          item: {
-            type: Object,
-            computed: '_makeItem(lastResponse,uuid)',
-            notify: true
-          },
-          /** The uuid to filter by */
-          uuid: {
-            type: String
-          },
-        };
+        return Object.assign(super.properties,
+            {
+              /**
+                If `uuid` is set will return an item from the result set that matches or null.
+                When `uuid` is not set, will simply return the first item from the list of results
+              */
+              item: {
+                type: Object,
+                computed: '_makeItem(lastResponse,uuid)',
+                notify: true
+              },
+              /** The uuid to filter by */
+              uuid: {
+                type: String
+              }
+            });
       }
-      _makeURL(path) {
-        return "https://api.devhub.virginia.edu/v1/library/"+path;
+      _computePath(path) {
+        return "library/"+path;
       }
       _makeItem(lastResponse, uuid) {
         if (this.lastResponse && this.lastResponse.length>0) {
