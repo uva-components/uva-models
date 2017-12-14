@@ -8,8 +8,10 @@
 <dom-module id="uva-transit">
   <template>
     <!-- get some bus stops! -->
-    <iron-ajax id="stops" auto url="[[_stopsURL]]" handle-as="json" last-response="{{_persistedStops}}" loading="{{loadingStops}}">
+    <uva-model id="stops" path="transit/bus-stops" last-response="{{_stops}}" loading="{{loadingStops}}"></uva-model>
+
     <!-- get some bus routes! -->
+    <uva-model id="routes" path="" last-response="" loading=""></uva-model>
     <iron-ajax id="routes" auto url="[[_routesURL]]" handle-as="json" last-response="{{_persistedRoutes}}" loading="{{loadingRoutes}}">
     <!-- get some route path segments! -->
     <iron-ajax id="segments" auto url="[[_segmentsURL]]" handle-as="json" last-response="{{_persistedSegment}}" loading="{{loadingSegments}}">
@@ -32,7 +34,7 @@
      * @polymer
      * @demo demo/simple-transit.html Map bind demo
      */
-    class UvaTransit extends Polymer.Element {
+    class UvaTransit extends UvaModel {
       static get is() { return 'uva-transit'; }
       static get properties() {
         return {
@@ -80,12 +82,6 @@
             computed: "_either(loadingStops, loadingRoutes, loadingAnnouncements, loadingBuses)"
           },
 
-          /** Used for storing the stops from ajax call (these are not filtered in any way and are not available offline) */
-          _stops: {
-            type: Object,
-            value: function(){return {};}
-          },
-
           /** Used for storing the routes from ajax call (these are not filtered in any way and are not available offline) */
           _routes: {
             type: Object,
@@ -111,8 +107,8 @@
             observer: "_getBuses"
           },
 
-          /** Used for storing the persisted version of the stops (this are not filtered in any way BUT are available offline if alreay cached) */
-          _persistedStops: {
+          /** Used for storing the stops (this are not filtered in any way) */
+          _stops: {
             type: Object,
             value: function(){return {};},
             observer: "_processStops"
@@ -187,18 +183,6 @@
             notify: true
           },
 
-          /** Used to maintain the url used to fetch stops via ajax. */
-          _stopsURL: {
-            type: String,
-            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/bus-stops",
-          },
-
-          /** Used to maintain the url used to fetch routes via ajax. */
-          _routesURL: {
-            type: String,
-            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/routes",
-          },
-
           /** Used to maintain the url used to fetch announcements via ajax. */
           _announcementsURL: {
             type: String,
@@ -239,15 +223,15 @@
         this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
             Polymer.Async.timeOut.after(200),
             () => {
-              if (this._persistedStops.routes) {
-                this._persistedStops.routes.forEach((route)=>{
+              if (this._stops.routes) {
+                this._stops.routes.forEach((route)=>{
                   let routePath = "routes."+route.id;
                   (this.routes[route.id] || this.set(routePath,{}) );
                   (route.stops && this.set(routePath+'.stops',route.stops) );
                 });
               }
-              if (this._persistedStops.stops) {
-                this._persistedStops.stops.forEach((stop)=>{
+              if (this._stops.stops) {
+                this._stops.stops.forEach((stop)=>{
                   let stopPath = "stops."+stop.id;
                   (this.stops[stop.id] || this.set(stopPath,{}) );
                   (stop.name && this.set(stopPath+'.name', stop.name) );
