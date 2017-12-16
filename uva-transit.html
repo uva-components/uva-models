@@ -2,6 +2,8 @@
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 
 <link rel="import" href="../polymer/lib/utils/debounce.html">
+<link rel="import" href="../uva-helper-libs/polyfills/object.assign.html">
+<link rel="import" href="../uva-helper-libs/polyfills/array.findindex.html">
 
 <link rel="import" href="./uva-model.html">
 
@@ -11,14 +13,16 @@
     <uva-model id="stops" path="transit/bus-stops" last-response="{{_stops}}" loading="{{loadingStops}}"></uva-model>
 
     <!-- get some bus routes! -->
-    <uva-model id="routes" path="" last-response="" loading=""></uva-model>
-    <iron-ajax id="routes" auto url="[[_routesURL]]" handle-as="json" last-response="{{_persistedRoutes}}" loading="{{loadingRoutes}}">
+    <uva-model id="routes" path="transit/routes" last-response="{{_routes}}" loading="{{loadingRoutes}}"></uva-model>
+
     <!-- get some route path segments! -->
-    <iron-ajax id="segments" auto url="[[_segmentsURL]]" handle-as="json" last-response="{{_persistedSegment}}" loading="{{loadingSegments}}">
+    <uva-model id="segments" path="transit/segments" last-response="{{_segments}}" loading="{{loadingSegments}}"></uva-model>
+
     <!-- get some bus announcements -->
-    <iron-ajax id="announcements" auto url="[[_announcementsURL]]" handle-as="json" last-response="{{_persistedAnnouncements}}" loading="{{loadingAnnouncements}}">
+    <uva-model id="announcements" path="transit/announcements" last-response="{{_announcements}}" loading="{{loadingAnnouncements}}"></uva-model>
+
     <!-- get some buses! -->
-    <iron-ajax id="buses" auto url="[[_busesURL]]" handle-as="json" last-response="{{_buses}}" loading="{{loadingBuses}}" on-response="_startAuto">
+    <uva-model id="buses" path="transit/vehicles" last-response="{{_buses}}" loading="{{loadingBuses}}" poll="2000"></uva-model>
   </template>
   <script>
     /**
@@ -37,183 +41,132 @@
     class UvaTransit extends UvaModel {
       static get is() { return 'uva-transit'; }
       static get properties() {
-        return {
+        return Object.assign(super.properties,
+          {
 
-          /** True while stops ajax request is in flight */
-          loadingStops: {
-            type: Boolean,
-            value: false
-          },
+            /** True while stops ajax request is in flight */
+            loadingStops: {
+              type: Boolean,
+              value: false
+            },
 
-          /** True while routes ajax request is in flight */
-          loadingRoutes: {
-            type: Boolean,
-            value: false
-          },
+            /** True while routes ajax request is in flight */
+            loadingRoutes: {
+              type: Boolean,
+              value: false
+            },
 
-          /** True while routes ajax request is in flight */
-          loadingAnnouncements: {
-            type: Boolean,
-            value: false
-          },
+            /** True while routes ajax request is in flight */
+            loadingAnnouncements: {
+              type: Boolean,
+              value: false
+            },
 
-          /** True while routes ajax request is in flight */
-          loadingBuses: {
-            type: Boolean,
-            value: false
-          },
+            /** True while routes ajax request is in flight */
+            loadingBuses: {
+              type: Boolean,
+              value: false
+            },
 
-          /** If true will poll the buses feed to update bus locations */
-          auto: {
-            type: Boolean,
-            value: false,
-            observer: "_startAuto"
-          },
+            /** True while API requests are in flight */
+            loading: {
+              type: Boolean,
+              computed: "_either(loadingStops, loadingRoutes, loadingAnnouncements, loadingBuses)"
+            },
 
-          /** Delay between request to update bus locations when `auto` is set */
-          delay: {
-            type: Number,
-            value: 2000
-          },
+            /** Used for storing the segments from ajax call (these are not filtered in any way and are not available offline) */
+            _segments: {
+              type: Object,
+              value: function(){return {};}
+            },
 
-          /** True while API requests are in flight */
-          loading: {
-            type: Boolean,
-            computed: "_either(loadingStops, loadingRoutes, loadingAnnouncements, loadingBuses)"
-          },
+            /** Used for storing the announcements from ajax call (these are not filtered in any way and are not available offline) */
+            _announcements: {
+              type: Object,
+              value: function(){return {};}
+            },
 
-          /** Used for storing the routes from ajax call (these are not filtered in any way and are not available offline) */
-          _routes: {
-            type: Object,
-            value: function(){return {};}
-          },
+            /** Used for storing the buses from ajax call (these are not filtered in any way) */
+            _buses: {
+              type: Object,
+              value: function(){return {};},
+              observer: "_getBuses"
+            },
 
-          /** Used for storing the segments from ajax call (these are not filtered in any way and are not available offline) */
-          _segments: {
-            type: Object,
-            value: function(){return {};}
-          },
+            /** Used for storing the stops (this are not filtered in any way) */
+            _stops: {
+              type: Object,
+              value: function(){return {};},
+              observer: "_processStops"
+            },
 
-          /** Used for storing the announcements from ajax call (these are not filtered in any way and are not available offline) */
-          _announcements: {
-            type: Object,
-            value: function(){return {};}
-          },
+            /** Used for storing the routes (this are not filtered in any way) */
+            _routes: {
+              type: Object,
+              value: function(){return {};},
+              observer: "_processRoutes"
+            },
 
-          /** Used for storing the buses from ajax call (these are not filtered in any way and are not available offline) */
-          _buses: {
-            type: Object,
-            value: function(){return {};},
-            observer: "_getBuses"
-          },
+            /** Used for storing the segments (this are not filtered in any way) */
+            _segments: {
+              type: Object,
+              value: function(){return {};},
+              observer: "_processSegments"
+            },
 
-          /** Used for storing the stops (this are not filtered in any way) */
-          _stops: {
-            type: Object,
-            value: function(){return {};},
-            observer: "_processStops"
-          },
+            /** Used for storing the full list of stops */
+            stops: {
+              type: Object,
+              value: function(){return {};},
+              notify: true
+            },
 
-          /** Used for storing the persisted version of the routes (this are not filtered in any way BUT are available offline if alreay cached) */
-          _persistedRoutes: {
-            type: Object,
-            value: function(){return {};},
-            observer: "_processRoutes"
-          },
+            /** Used for storing the full list of routes */
+            routes: {
+              type: Object,
+              value: function(){return {};},
+              notify: true
+            },
 
-          /** Used for storing the persisted version of the segments (this are not filtered in any way BUT are available offline if alreay cached) */
-          _persistedSegments: {
-            type: Object,
-            value: function(){return {};},
-            observer: "_processSegments"
-          },
+            /** Used for storing the full list of route segments */
+            segments: {
+              type: Array,
+              value: function(){return [];},
+              notify: true
+            },
 
-          /** Used for storing the persisted version of the routes (this are not filtered in any way BUT are available offline if alreay cached) */
-          _persistedAnnouncements: {
-            type: Object,
-            value: function(){return {};}
-          },
+            /** Used for storing the list of UVA UTS announcements */
+            announcements: {
+              type: Array,
+              computed: "_getAnnouncements(_announcements)",
+              notify: true
+            },
 
-          /** Used for storing the full list of stops that have been persisted */
-          stops: {
-            type: Object,
-            value: function(){return {};},
-            notify: true
-          },
+            /** Used for storing the list of UVA UTS buses and their locations */
+            buses: {
+              type: Array,
+              value: function(){return [];},
+              notify: true
+            },
 
-          /** Used for storing the full list of routes that have been persisted */
-          routes: {
-            type: Object,
-            value: function(){return {};},
-            notify: true
-          },
+            /** UVA UTS bus stops filtered by attributes */
+            filteredStops: {
+              type: Array,
+              computed: '_filterStops(stops.*)',
+              notify: true
+            },
 
-          /** Used for storing the full list of route segments that have been persisted */
-          segments: {
-            type: Array,
-            value: function(){return [];},
-            notify: true
-          },
+            /** UVA UTS bus routes filtered by attributes */
+            filteredRoutes: {
+              type: Array,
+              computed: '_filterRoutes(routes.*)',
+              notify: true
+            }
 
-          /** Used for storing the list of UVA UTS announcements */
-          announcements: {
-            type: Array,
-            computed: "_getAnnouncements(_persistedAnnouncements)",
-            notify: true
-          },
-
-          /** Used for storing the list of UVA UTS buses and their locations */
-          buses: {
-            type: Array,
-            value: function(){return [];},
-            notify: true
-          },
-
-          /** UVA UTS bus stops filtered by attributes */
-          filteredStops: {
-            type: Array,
-            computed: '_filterStops(stops.*)',
-            notify: true
-          },
-
-          /** UVA UTS bus routes filtered by attributes */
-          filteredRoutes: {
-            type: Array,
-            computed: '_filterRoutes(routes.*)',
-            notify: true
-          },
-
-          /** Used to maintain the url used to fetch announcements via ajax. */
-          _announcementsURL: {
-            type: String,
-            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/announcements",
-          },
-
-          /** Used to maintain the url used to fetch buses via ajax. */
-          _busesURL: {
-            type: String,
-            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/vehicles",
-          },
-
-          /** Used to maintain the url used to fetch buses via ajax. */
-          _segmentsURL: {
-            type: String,
-            value: "https://5570499q1i.execute-api.us-east-2.amazonaws.com/v0_0_1/transit/segments",
-          }
-
-        };
+          });
       }
       ready() {
         super.ready();
-      }
-
-      _startAuto() {
-        if (this.auto && !this._timeout) {
-          this._timeout = setTimeout(function(){
-            this.shadowRoot.querySelector('#buses').generateRequest();
-            this._timeout = null;
-          }.bind(this),this.delay)
-        }
       }
 
       /**
@@ -251,7 +204,7 @@
 
       _cleanupBus(bus) {
         let b = (({current_stop_id,heading,id,route_id,segment_id,speed,timestamp})=>({current_stop_id,heading,id,route_id,segment_id,speed,timestamp}))(bus);
-        if (this.routes) {
+        if (this.routes && this.routes[parseInt(b.route_id)]) {
           b.routeName = this.routes[parseInt(b.route_id)].name;
         }
         b.latitude = (bus.position[0])? bus.position[0]:null;
@@ -280,8 +233,8 @@
         this._routeDebouncer = Polymer.Debouncer.debounce(this._routeDebouncer,
             Polymer.Async.timeOut.after(200),
             () => {
-              if (this._persistedRoutes.routes) {
-                this._persistedRoutes.routes.forEach((route)=>{
+              if (this._routes.routes) {
+                this._routes.routes.forEach((route)=>{
                   let routePath = "routes."+route.id;
                   (this.routes[route.id] || this.set(routePath,{}) );
                   (route.bounds && this.set(routePath+'.bounds',route.bounds) );
@@ -300,17 +253,17 @@
             Polymer.Async.timeOut.after(200),
             () => {
               // assign the segment ids to the routes
-              if (this._persistedSegments.routes) {
-                this._persistedSegments.routes.forEach((route)=>{
+              if (this._segments.routes) {
+                this._segments.routes.forEach((route)=>{
                   let routePath = "routes."+route.id;
                   (this.routes[route.id] || this.set(routePath,{}) );
                   (route.segments && this.set(routePath+'.segments', route.segments.filter((seg)=>seg>0) ) );
                 });
               }
               // get the segments (ignoring levels for now)
-              if (this._persistedSegments.segments) {
+              if (this._segments.segments) {
                 var listing = [];
-                this._persistedSegments.segments.forEach((segment)=>{
+                this._segments.segments.forEach((segment)=>{
                   listing.push( { id:segment.id,
                                   points:google.maps.geometry.encoding.decodePath(segment.points).map((p)=>{return {lat:p.lat(),lng:p.lng()}; })
                                 });//google.maps.geometry.encoding.decodePath(segment.points).map((p)=>{return {lat:p.lat(),lng:p.lng()}; }) );

@@ -1,13 +1,13 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
-<link rel="import" href="../uva-helper-libs/promise.html">
+<link rel="import" href="../uva-helper-libs/polyfills/object.assign.html">
 
 <dom-module id="uva-model">
   <template>
     <style>
       :host { display: none; }
     </style>
-    <iron-ajax auto url="[[_url]]" handle-as="json" loading="{{loading}}" last-response="{{lastResponse}}"></iron-ajax>
+    <iron-ajax id="ajax" auto url="[[_url]]" handle-as="json" loading="{{loading}}" last-response="{{lastResponse}}" on-response="_reqFinished"></iron-ajax>
   </template>
 
   <script>
@@ -43,14 +43,25 @@
             type: Object,
             notify: true
           },
+          /** The version (path) of the UVA data api */
           apiVersion: {
             type: String,
             value: "v1"
-          }
+          },
+          /** To poll the api for changes, set this to the number of milliseconds between response and new request */
+          poll: Number
         };
       }
       _makeURL(path,apiVersion) {
         return "https://api.devhub.virginia.edu/"+apiVersion+"/"+path;
+      }
+      _reqFinished() {
+        if (this.poll) {
+          this._timeout = setTimeout(function(){
+            this.shadowRoot.querySelector('#ajax').generateRequest();
+            this._timeout = null;
+          }.bind(this),this.poll)
+        }
       }
     }
 
