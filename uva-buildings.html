@@ -3,6 +3,7 @@
 <link rel="import" href="../app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../polymer/lib/utils/debounce.html">
 <link rel="import" href="../uva-helper-libs/polyfills/object.assign.html">
+<link rel="import" href="../uva-helper-libs/turf.html">
 
 <dom-module id="uva-buildings">
   <template>
@@ -209,29 +210,13 @@
                 // add a distance property to the buildings
                 buildings.forEach(function(bl){
                   if (bl.Latitude && bl.Longitude) {
-                    bl.distance = this._distance(bl.Latitude,bl.Longitude,this.latitude,this.longitude);
+                    bl.distance = turf.distance(turf.point([bl.Longitude,bl.Latitude]),turf.point([this.longitude,this.latitude]))/0.001000;
                   }
                 }.bind(this));
                 if (this.distance) buildings = buildings.filter((b) => b.distance>=0 && b.distance <= this.distance);
               }
               this.set('buildings', buildings);
             } );
-      }
-
-      /**
-       * Gets the distance in m between two lat/long sets.
-       *
-       * @param {Number} lat1 The latitude of the first point.
-       * @param {Number} lon1 The longitude of the first point.
-       * @param {Number} lat2 The latitude of the second point.
-       * @param {Number} lon2 The longitude of the second point.
-       * @return {Number} The distance in km between the two points.
-       */
-      _distance(lat1, lon1, lat2, lon2) {
-        return (lat1==lat2&&lon1==lon2)?
-              0:
-              google.maps.geometry.spherical.computeDistanceBetween(
-                new google.maps.LatLng(lat1, lon1), new google.maps.LatLng(lat2, lon2));
       }
 
       /**
