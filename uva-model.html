@@ -82,7 +82,6 @@
       _parseResponse() {
         if (this.csv) {
           // parse the csv
-          console.log('parse');
           this._setLastResponse(Papa.parse(this._lastResponse,{header:true,skipEmptyLines:true}).data);
         } else {
           this._setLastResponse(this._lastResponse);
