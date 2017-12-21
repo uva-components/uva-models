@@ -3,14 +3,6 @@
 <link rel="import" href="../uva-helper-libs/polyfills/object.assign.html">
 
 <dom-module id="uva-library">
-  <template>
-    <style>
-      :host {
-        display: none;
-      }
-    </style>
-    <uva-model path="[[_computePath(path)]]" loading="{{loading}}" last-response="{{lastResponse}}"></uva-model>
-  </template>
 
   <script>
     /**
@@ -41,8 +33,8 @@
               }
             });
       }
-      _computePath(path) {
-        return "library/"+path;
+      _makeURL(path,apiVersion) {
+        return this._apidomain+apiVersion+"/library/"+path;
       }
       _makeItem(lastResponse, uuid) {
         if (this.lastResponse && this.lastResponse.length>0) {

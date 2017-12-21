@@ -67,7 +67,11 @@
             type: String,
             computed: "_typeOfRequest(csv)"
           },
-          _contentType: String
+          _contentType: String,
+          _apidomain: {
+            type: String,
+            value: "https://api.devhub.virginia.edu/"
+          }
         };
       }
       /** Loads the CSV parser if needed */
@@ -91,7 +95,7 @@
         return (csv)? "text":"json";
       }
       _makeURL(path,apiVersion) {
-        return "https://api.devhub.virginia.edu/"+apiVersion+"/"+path;
+        return this._apidomain+apiVersion+"/"+path;
       }
       _reqFinished() {
         if (this.poll) {
