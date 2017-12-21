@@ -72,6 +72,26 @@
         </template>
       </demo-snippet>
 
+      <h3>Basic uva-library demo for Alerts</h3>
+      <demo-snippet>
+        <template>
+
+          <dom-bind>
+            <template>
+              <uva-library poll="60000" path="alerts" last-response="{{response}}"></uva-library>
+              <ul>
+                <dom-repeat items="{{response}}">
+                  <template>
+                    <li>{{item.title}}</li>
+                  </template>
+                </dom-repeat>
+              </ul>
+            </template>
+          </dom-bind>
+
+        </template>
+      </demo-snippet>
+
       <h3>Basic uva-library demo for Files</h3>
       <demo-snippet>
         <template>
@@ -91,7 +111,7 @@
 
         </template>
       </demo-snippet>
-    
+
     </div>
   </body>
 </html>
