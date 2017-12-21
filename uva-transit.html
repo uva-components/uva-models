@@ -22,7 +22,7 @@
     <uva-model id="announcements" path="transit/announcements" last-response="{{_announcements}}" loading="{{loadingAnnouncements}}"></uva-model>
 
     <!-- get some buses! -->
-    <uva-model id="buses" path="transit/vehicles" last-response="{{_buses}}" loading="{{loadingBuses}}" poll="2000"></uva-model>
+    <uva-model id="buses" path="transit/vehicles" poll="2000" csv last-response="{{_buses}}" loading="{{loadingBuses}}"></uva-model>
   </template>
   <script>
     /**
@@ -203,18 +203,17 @@
       }
 
       _cleanupBus(bus) {
-        let b = (({current_stop_id,heading,id,route_id,segment_id,speed,timestamp})=>({current_stop_id,heading,id,route_id,segment_id,speed,timestamp}))(bus);
-        if (this.routes && this.routes[parseInt(b.route_id)]) {
-          b.routeName = this.routes[parseInt(b.route_id)].name;
+        if (this.routes && this.routes[parseInt(bus.route_id)]) {
+          bus.routeName = this.routes[parseInt(bus.route_id)].name;
         }
-        b.latitude = (bus.position[0])? bus.position[0]:null;
-        b.longitude = (bus.position[1])? bus.position[1]:null;
-        return b;
+        bus.latitude = bus.lat;
+        bus.longitude = bus.lng;
+        return bus;
       }
 
       _getBuses() {
-        if (this._buses && this._buses.vehicles && this._buses.vehicles.length>0) {
-          this._buses.vehicles.forEach((bus)=>{
+        if (this._buses && this._buses.length) { //this._buses.vehicles && this._buses.vehicles.length>0) {
+          this._buses.forEach((bus)=>{
             let index = this.buses.findIndex((b)=>{return (b.id==bus.id)});
             if (index==-1) {
               this.push('buses',this._cleanupBus(bus));
