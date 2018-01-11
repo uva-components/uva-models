@@ -1,0 +1,68 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./uva-library.html">
+<link rel="import" href="../uva-helper-libs/polyfills/object.assign.html">
+<link rel="import" href="../app-storage/app-localstorage-document.html" />
+
+<dom-module id="uva-library-alerts">
+  <template>
+    <app-localstorage-document key="uvalib-alerts-seen" data="{{seen}}"></app-localstorage-document>
+  </template>
+  <script>
+    /**
+     * `uva-library-alerts`
+     * Binds to the UVA Library Alerts APIs and offeres some helper functionality
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/library-alerts.html
+     */
+    class UvaLibraryAlerts extends UvaLibrary {
+      static get is() { return 'uva-library-alerts'; }
+      static get properties() {
+        return Object.assign(super.properties,
+            {
+              alerts: {
+                type: Array,
+                computed: '_mkAlerts(lastResponse,seen)',
+                notify: true
+              },
+              seen: {
+                type: Array,
+                notify: true,
+              },
+              poll: {
+                type: Number,
+                value: 600000
+              },
+              unseenCount: {
+                type: Number,
+                notify: true,
+                computed: '_getUnseenCount(alerts)'
+              }
+            });
+      }
+      //Concat the this elements template with the parents
+      static get template() {
+        var parentTemplate = UvaLibrary.template.cloneNode(true);
+        var childTemplate = Polymer.DomModule.import('uva-library-alerts', 'template');
+        parentTemplate.content.insertBefore(childTemplate.content,null);
+        return parentTemplate;
+      }
+      _mkAlerts(resp){
+        if(resp && Array.isArray(resp)) {
+          return resp;
+        } else {
+          return [];
+        }
+      }
+      _makeURL(path,apiVersion) {
+        return this._apidomain+apiVersion+"/library/alerts";
+      }
+      _getUnseenCount(alerts){
+        return alerts.length;
+      }
+    }
+
+    window.customElements.define(UvaLibraryAlerts.is, UvaLibraryAlerts);
+  </script>
+</dom-module>
