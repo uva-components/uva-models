@@ -21,24 +21,29 @@
       static get properties() {
         return Object.assign(super.properties,
             {
+              lastResponse: {
+                type: Array,
+                observer: '_copyAlerts'
+              },
               alerts: {
                 type: Array,
-                computed: '_mkAlerts(lastResponse,seen)',
-                notify: true
+//                computed: '_mkAlerts(lastResponse,seen)',
+                notify: true,
+                value: function(){return [];}
               },
               seen: {
                 type: Array,
                 notify: true,
-                value: function(){return [];}
+                observer: '_copyAlerts'
               },
               poll: {
                 type: Number,
                 value: 600000
               },
-              unseenCount: {
+              seenCount: {
                 type: Number,
                 notify: true,
-                computed: '_getUnseenCount(alerts)'
+                computed: '_getSeenCount(alerts)'
               }
             });
       }
@@ -49,18 +54,20 @@
         parentTemplate.content.insertBefore(childTemplate.content,null);
         return parentTemplate;
       }
-      _mkAlerts(resp){
-        if(resp && Array.isArray(resp)) {
-          return resp;
-        } else {
-          return [];
+      _copyAlerts(){
+        if (Array.isArray(this.lastResponse) && this.lastResponse.length>0) {
+          this.set('alerts', this.lastResponse.map(function(alert) {
+            if (this.seen.indexOf(alert.uuid)>-1) {alert.seen = true;}
+            else {alert.seen = false;}
+            return alert;
+          }.bind(this)));
         }
       }
       _makeURL(path,apiVersion) {
         return this._apidomain+apiVersion+"/library/alerts";
       }
-      _getUnseenCount(alerts){
-        return alerts.length;
+      _getSeenCount(alerts){
+        return alerts.filter(a => a.seen).length;
       }
     }
 
