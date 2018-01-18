@@ -71,10 +71,11 @@
       _evalAlerts(){
         if(Array.isArray(this.alerts) && this.alerts.length>0) {
           this.alerts.forEach(function(alert,i){
-            if (this.seen.indexOf(alert.uuid)>-1) {
-              //this.alerts[0].seen = true;
-              //this.notifyPath("this.alerts.0.seen", this.alerts[0].seen);
+            if (this.seen.indexOf(alert.uuid)>-1 && !this.alerts[i].seen) {
               this.set('alerts.'+i+'.seen', true);
+              this.set('_force', !this._force);
+            } else if (this.alerts[i].seen) {
+              this.set('alerts.'+i+'.seen', false);
               this.set('_force', !this._force);
             }
           }.bind(this));
