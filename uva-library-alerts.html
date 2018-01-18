@@ -27,7 +27,6 @@
               },
               alerts: {
                 type: Array,
-//                computed: '_mkAlerts(lastResponse,seen)',
                 notify: true,
                 value: function(){return [];}
               },
@@ -62,11 +61,20 @@
       _copyAlerts(){
         if (Array.isArray(this.lastResponse) && this.lastResponse.length>0) {
           this.set('alerts', this.lastResponse.map(function(alert) {
+            if (alert.severity==="alert3") {this.setSeen(alert.uuid)}
             if (this.seen.indexOf(alert.uuid)>-1) {alert.seen = true;}
             else {alert.seen = false;}
             return alert;
-          }.bind(this)));
+          }.bind(this)).sort(function(x,y){return x.severity>y.severity}) );
         }
+      }
+      setSeen(uuid){
+        var seen = this.seen;
+        if (seen.indexOf(uuid)===-1) {
+          seen.push(uuid);
+        }
+        this.set('seen',[]);
+        this.set('seen',seen);
       }
       _evalAlerts(){
         if(Array.isArray(this.alerts) && this.alerts.length>0) {
