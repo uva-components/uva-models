@@ -34,7 +34,8 @@
               seen: {
                 type: Array,
                 notify: true,
-                observer: '_copyAlerts'
+                observer: '_evalAlerts',
+                value: []
               },
               poll: {
                 type: Number,
@@ -43,7 +44,11 @@
               seenCount: {
                 type: Number,
                 notify: true,
-                computed: '_getSeenCount(alerts)'
+                computed: '_getSeenCount(alerts,_force)'
+              },
+              _force: {
+                type: Boolean,
+                value: true
               }
             });
       }
@@ -61,6 +66,18 @@
             else {alert.seen = false;}
             return alert;
           }.bind(this)));
+        }
+      }
+      _evalAlerts(){
+        if(Array.isArray(this.alerts) && this.alerts.length>0) {
+          this.alerts.forEach(function(alert,i){
+            if (this.seen.indexOf(alert.uuid)>-1) {
+              //this.alerts[0].seen = true;
+              //this.notifyPath("this.alerts.0.seen", this.alerts[0].seen);
+              this.set('alerts.'+i+'.seen', true);
+              this.set('_force', !this._force);
+            }
+          }.bind(this));
         }
       }
       _makeURL(path,apiVersion) {
