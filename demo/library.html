@@ -22,7 +22,27 @@
   <body>
     <div class="vertical-section-container centered">
 
-      <h3>Basic uva-library demo for Web Banners</h3>
+      <h3>Basic uva-library demo for resource cards</h3>
+      <demo-snippet>
+        <template>
+
+          <dom-bind>
+            <template>
+              <uva-library path="web/resource-cards" last-response="{{response}}"></uva-library>
+              <ul>
+                <dom-repeat items="{{response}}">
+                  <template>
+                    <li>{{item.title}}</li>
+                  </template>
+                </dom-repeat>
+              </ul>
+            </template>
+          </dom-bind>
+
+        </template>
+      </demo-snippet>
+
+      <h3>Basic uva-library demo for web banners</h3>
       <demo-snippet>
         <template>
 

@@ -74,6 +74,21 @@
           }
         };
       }
+      getHash(key, vals) {
+        if (Array.isArray(this.lastResponse)) {
+          var hash = {};
+          this.lastResponse.forEach(function(x) {
+            if (x[key]) {
+              hash[x[key]]={};
+              vals.forEach( (y) => {
+                hash[x[key]][y] = x[y];
+              });
+            }
+          }.bind(this));
+          return hash;
+        }
+        return {};
+      }
       /** Loads the CSV parser if needed */
       _CSVobserver() {
         if (this.csv) {
