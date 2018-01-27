@@ -30,9 +30,9 @@
             <template>
               <uva-library path="web/resource-cards" last-response="{{response}}"></uva-library>
               <ul>
-                <dom-repeat items="{{response}}">
+                <dom-repeat items="[[response]]">
                   <template>
-                    <li>{{item.title}}</li>
+                    <li>[[item.title]]</li>
                   </template>
                 </dom-repeat>
               </ul>
@@ -50,9 +50,9 @@
             <template>
               <uva-library path="web/banners" last-response="{{response}}"></uva-library>
               <ul>
-                <dom-repeat items="{{response}}">
+                <dom-repeat items="[[response]]">
                   <template>
-                    <li>{{item.title}}</li>
+                    <li>[[item.title]]</li>
                   </template>
                 </dom-repeat>
               </ul>
@@ -69,9 +69,9 @@
             <template>
               <uva-library path="web/blocks" last-response="{{response}}"></uva-library>
               <ul>
-                <dom-repeat items="{{response}}">
+                <dom-repeat items="[[response]]">
                   <template>
-                    <li>{{item.title}}</li>
+                    <li>[[item.title]]</li>
                   </template>
                 </dom-repeat>
               </ul>
@@ -86,7 +86,7 @@
           <dom-bind>
             <template>
               <uva-library path="web/blocks" item="{{item}}" uuid="697d5fca-d2f6-4f27-9ab5-ed1af7f9f5d1"></uva-library>
-              <h3>{{item.title}}</h3>
+              <h3>[[item.title]]</h3>
             </template>
           </dom-bind>
         </template>
@@ -100,9 +100,9 @@
             <template>
               <uva-library poll="60000" path="alerts" last-response="{{response}}"></uva-library>
               <ul>
-                <dom-repeat items="{{response}}">
+                <dom-repeat items="[[response]]">
                   <template>
-                    <li>{{item.title}}</li>
+                    <li>[[item.title]]</li>
                   </template>
                 </dom-repeat>
               </ul>
@@ -120,9 +120,9 @@
             <template>
               <uva-library path="files" last-response="{{response}}"></uva-library>
               <ul>
-                <dom-repeat items="{{response}}">
+                <dom-repeat items="[[response]]">
                   <template>
-                    <li>{{item.filename}}</li>
+                    <li>[[item.filename]]</li>
                   </template>
                 </dom-repeat>
               </ul>
