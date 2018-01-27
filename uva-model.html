@@ -99,12 +99,18 @@
         }
       }
       _parseResponse() {
-        if (this.csv) {
-          // parse the csv
-          this._setLastResponse(Papa.parse(this._lastResponse,{header:true,skipEmptyLines:true}).data);
-        } else {
-          this._setLastResponse(this._lastResponse);
-        }
+        this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
+            Polymer.Async.timeOut.after(200),
+            () => {
+
+          if (this.csv) {
+            // parse the csv
+            this._setLastResponse(Papa.parse(this._lastResponse,{header:true,skipEmptyLines:true}).data);
+          } else {
+            this._setLastResponse(this._lastResponse);
+          }
+
+        });
       }
       _typeOfRequest(csv) {
         return (csv)? "text":"json";
