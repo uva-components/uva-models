@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../uva-helper-libs/polyfills/object.assign.html">
+<link rel="import" href="../uva-helper-libs/lodash.html">
 
 <dom-module id="uva-model">
   <template>
@@ -71,8 +72,28 @@
           _apidomain: {
             type: String,
             value: "https://api.devhub.virginia.edu/"
+          },
+          items: {
+            type: Array,
+            computed: '_getItems(lastResponse)',
+            notify: true
+          },
+          sortBy: String,
+          sortOrder: {
+            type: String,
+            value: 'asc'
           }
         };
+      }
+      _getItems(lastResponse) {
+        if (Array.isArray(lastResponse)) {
+          var items = this.lastResponse;
+          if (this.sortBy) {
+            items = _.orderBy(items, this.sortBy, this.sortOrder);
+          }
+          return items;
+        }
+        return null;
       }
       /** Helper method for when you need a hash instead of an array **/
       getHash(key, vals) {
