@@ -1,0 +1,43 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="./uva-library.html">
+
+<dom-module id="uva-library-hours">
+  <template>
+
+  </template>
+  <script>
+    /**
+     * `uva-library-hours`
+     * Binds to the UVA Library Hours API and offeres some helper functionality
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/library-hours.html
+     */
+    class UvaLibraryHours extends UvaLibrary {
+      static get is() { return 'uva-library-hours'; }
+      static get properties() {
+        return Object.assign(super.properties,
+            {
+              lastResponse: {
+                type: Array,
+                observer: '_copyAlerts'
+              },
+              path: {
+                type: String,
+                value: "hours"
+              }
+            });
+      }
+      //Concat the this elements template with the parents
+      static get template() {
+        var parentTemplate = UvaLibrary.template.cloneNode(true);
+        var childTemplate = Polymer.DomModule.import('uva-library-hours', 'template');
+        parentTemplate.content.insertBefore(childTemplate.content,null);
+        return parentTemplate;
+      }
+    }
+
+    window.customElements.define(UvaLibraryHours.is, UvaLibraryHours);
+  </script>
+</dom-module>
