@@ -82,12 +82,16 @@
           sortOrder: {
             type: String,
             value: 'asc'
-          }
+          },
+          filter: Object
         };
       }
       _getItems(lastResponse) {
         if (Array.isArray(lastResponse)) {
           var items = this.lastResponse;
+          if (this.filter) {
+            items = _.filter(items,this.filter);
+          }
           if (this.sortBy) {
             items = _.orderBy(items, this.sortBy, this.sortOrder);
           }
