@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="./uva-library.html">
+<link rel="import" href="../uva-helper-libs/moment-timezone.html">
 
 <dom-module id="uva-library-hours">
   <template>
@@ -18,16 +19,32 @@
       static get is() { return 'uva-library-hours'; }
       static get properties() {
         return Object.assign(super.properties,
-            {
-              lastResponse: {
-                type: Array,
-                observer: '_copyAlerts'
-              },
-              path: {
-                type: String,
-                value: "hours"
-              }
-            });
+          {
+            path: {
+              type: String,
+              value: "hours"
+            },
+            // Date to start range when reporting hours to `times`
+            start: {
+              type: Object,
+              observer: '_mkTimes'
+            },
+            // Date to end range when reporting hours to `times`
+            end: {
+              type: Object,
+              observer: '_mkTimes'
+            },
+            times: {
+              type: Object,
+              notify: true
+            }
+          });
+      }
+      static get observers() {
+        return [
+          // Observer method name, followed by a list of dependencies, in parenthesis
+          '_mkTimes(lastResponse,start,end)'
+        ]
       }
       //Concat the this elements template with the parents
       static get template() {
@@ -36,6 +53,27 @@
         parentTemplate.content.insertBefore(childTemplate.content,null);
         return parentTemplate;
       }
+      _mkTimes(){
+        if (this.lastResponse) {
+          this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
+              Polymer.Async.timeOut.after(50),
+              function() {
+                var times = {};
+                var start = this.start.tz('America/New_York').format('YYYY-MM-DD');
+                var end = this.end.tz('America/New_York').format('YYYY-MM-DD');
+                for (var libid in this.lastResponse) {
+                  times[libid] = {};
+                  for (var date in this.lastResponse[libid]) {
+                    if (start <= date && end >= date) {
+                      times[libid][date]=this.lastResponse[libid][date];
+                    }
+                  }
+                }
+                this.times = times;
+              }.bind(this) );
+        }
+      }
+
     }
 
     window.customElements.define(UvaLibraryHours.is, UvaLibraryHours);
