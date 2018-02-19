@@ -75,7 +75,8 @@
               }.bind(this) );
         }
       }
-
+      isOpenNow(calID){ return true; }
+      getHoursRange(calID){ return "9am-11pm"}
     }
 
     window.customElements.define(UvaLibraryHours.is, UvaLibraryHours);
