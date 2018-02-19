@@ -24,14 +24,16 @@
               type: String,
               value: "hours"
             },
-            // Date to start range when reporting hours to `times`
+            // Date to start range when reporting hours to `times`, defaults to today
             start: {
               type: Object,
+              value: function(){ return moment(); },
               observer: '_mkTimes'
             },
-            // Date to end range when reporting hours to `times`
+            // Date to end range when reporting hours to `times`, defaults to today
             end: {
               type: Object,
+              value: function(){ return moment(); },
               observer: '_mkTimes'
             },
             times: {
