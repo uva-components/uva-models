@@ -75,8 +75,20 @@
               }.bind(this) );
         }
       }
-      isOpenNow(calID){ return true; }
-      getHoursRange(calID){ return "9am-11pm"}
+      isOpenNow(calID){
+        if (this.times && this.times[calID])
+          return true;
+        else {
+          return false;
+        }
+      }
+      getHoursRange(calID){
+        var range = (this.times && this.times[calID])?
+            Object.values(this.times[calID])[0].rendered:
+            null;
+        console.log(range);
+        return range;
+      }
     }
 
     window.customElements.define(UvaLibraryHours.is, UvaLibraryHours);
