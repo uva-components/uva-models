@@ -7,6 +7,8 @@
 
   </template>
   <script>
+
+
     /**
      * `uva-library-hours`
      * Binds to the UVA Library Hours API and offeres some helper functionality
@@ -83,8 +85,20 @@
         }
       }
       getHoursRange(calID){
+        var valuesPolyfill = function(obj) {
+          var res = [];
+          for (var i in obj) {
+              if (obj.hasOwnProperty(i)) {
+                  res.push(obj[i]);
+              }
+          }
+          return res;
+        }
+
+        var values = Object.values || valuesPolyfill;
+
         var range = (this.times && this.times[calID])?
-            Object.values(this.times[calID])[0].rendered:
+            values(this.times[calID])[0].rendered:
             null;
         return range;
       }
