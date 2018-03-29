@@ -8,7 +8,7 @@
     <style>
       :host { display: none; }
     </style>
-    <iron-ajax id="ajax" auto url="[[_url]]" handle-as="[[_requestType]]" loading="{{loading}}" last-response="{{_lastResponse}}" on-response="_reqFinished" headers="[[_headers]]"></iron-ajax>
+    <iron-ajax id="ajax" auto="[[auto]]" url="[[_url]]" handle-as="[[_requestType]]" loading="{{loading}}" last-response="{{_lastResponse}}" on-response="_reqFinished" headers="[[_headers]]"></iron-ajax>
   </template>
 
   <script>
@@ -29,6 +29,11 @@
           _url: {
             type: String,
             computed: '_makeURL(path,apiVersion)'
+          },
+          /** If true, automatically performs an Ajax request when parameters change */
+          auto: {
+            type: Boolean,
+            value: true
           },
           /** The API path used in the request */
           path: {
@@ -85,6 +90,9 @@
           },
           filter: Object
         };
+      }
+      generateRequest() {
+        this.$.ajax.generateRequest();
       }
       _getItems(lastResponse) {
         if (Array.isArray(lastResponse)) {
