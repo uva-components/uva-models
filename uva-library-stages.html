@@ -1,4 +1,3 @@
-<link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="./uva-library.html">
 <link rel="import" href="../uva-helper-libs/polyfills/object.assign.html">
 <link rel="import" href="../app-route/app-location.html">
@@ -9,6 +8,7 @@
     <app-location query-params="{{_qp}}"></app-location>
     <app-localstorage-document zero-value="_getStage" session-only="[[sessionOnly]]" key="uvalib-stage" data="{{_stage}}"></app-localstorage-document>
   </template>
+
   <script>
     /**
      * `uva-library-stages`
@@ -29,15 +29,23 @@
               stage: {
                 type:Object,
                 computed: "_getStage(item)",
-                observer: "_stageChanged"
+                observer: "_stageChanged",
+                notify: true
               },
               _stage: Object,
-              _qp: Object
+              _qp: Object,
+              auto: {
+                type: Boolean,
+                value: false
+              },
+              returnFirst: {
+                type: Boolean,
+                value: false
+              }
             });
       }
       static get observers() {
         return [
-//          '_stageChanged(stage)',
           // uuid is set via param, or pulled from localstorage
           '_uuidChanged(_qp.stageID, _stage.uuid)'
         ]
@@ -72,7 +80,6 @@
         }
       }
     }
-
     window.customElements.define(UvaLibraryStages.is, UvaLibraryStages);
   </script>
 </dom-module>

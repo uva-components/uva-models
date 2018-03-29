@@ -31,6 +31,11 @@
               /** The uuid to filter by */
               uuid: {
                 type: String
+              },
+              /** If true will return the first item from the list of items given no uuid */
+              returnFirst: {
+                type: Boolean,
+                value: true
               }
             });
       }
@@ -41,8 +46,10 @@
         if (this.lastResponse && this.lastResponse.length>0) {
           if (uuid) {
             return this.lastResponse.find((e)=>{return (e.uuid==uuid)});
-          } else {
+          } else if (this.returnFirst) {
             return this.lastResponse[0];
+          } else {
+            return null;
           }
         }
       }
