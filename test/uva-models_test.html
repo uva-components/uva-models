@@ -4,36 +4,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>uva-buildings test</title>
+    <title>uva-models test</title>
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
 
-    <link rel="import" href="../uva-buildings.html">
+    <script type="module" src="../uva-models.js"></script>
   </head>
   <body>
 
     <test-fixture id="BasicTestFixture">
       <template>
-        <uva-buildings></uva-buildings>
+        <uva-models></uva-models>
       </template>
     </test-fixture>
 
     <test-fixture id="ChangedPropertyTestFixture">
       <template>
-        <uva-buildings prop1="new-prop1"></uva-buildings>
+        <uva-models prop1="new-prop1"></uva-models>
       </template>
     </test-fixture>
 
-    <script>
-      suite('uva-buildings', () => {
+    <script type="module">
+      suite('uva-models', () => {
 
         test('instantiating the element with default properties works', () => {
           const element = fixture('BasicTestFixture');
-          assert.equal(element.prop1, 'uva-buildings');
+          assert.equal(element.prop1, 'uva-models');
           const elementShadowRoot = element.shadowRoot;
           const elementHeader = elementShadowRoot.querySelector('h2');
-          assert.equal(elementHeader.innerHTML, 'Hello uva-buildings!');
+          assert.equal(elementHeader.innerHTML, 'Hello uva-models!');
         });
 
         test('setting a property on the element works', () => {
