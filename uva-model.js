@@ -1,4 +1,6 @@
 import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import 'whatwg-fetch';
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
 /**
  * `uva-model`

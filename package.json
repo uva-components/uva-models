@@ -2,7 +2,9 @@
   "name": "uva-model",
   "main": "uva-model.js",
   "dependencies": {
-    "@polymer/polymer": "^3.0.0"
+    "@polymer/polymer": "^3.0.0",
+    "abortcontroller-polyfill": "^1.1.9",
+    "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
     "@polymer/iron-demo-helpers": "^3.0.0-pre.19",
