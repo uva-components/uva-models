@@ -49,8 +49,8 @@ class UvaModel extends PolymerElement {
         type: String,
         value: "v1"
       },
-//      /** To poll the api for changes, set this to the number of milliseconds between response and new request */
-//      poll: Number,
+      /** To poll the api for changes, set this to the number of milliseconds between response and new request */
+      poll: Number,
 //      /** If `true` and the API supports CSV then the CSV feed will be used and parsed to save on the amount of data (no duplicate property names) */
 //      csv: {
 //        type: Boolean,
@@ -82,7 +82,7 @@ class UvaModel extends PolymerElement {
   static get observers() {
     return [
       // update lastResponse when needed
-      'generateRequest(_url,auto)'
+      'generateRequest(_url,auto,poll)'
     ]
   }
 
@@ -125,18 +125,17 @@ class UvaModel extends PolymerElement {
   }
   /** makes the items array from the lastResponse and other parameters */
   _getItems(lastResponse) {
-//    if (Array.isArray(lastResponse)) {
-//      var items = this.lastResponse;
-//      if (this.filter) {
-//        items = _.filter(items,this.filter);
-//      }
-//      if (this.sortBy) {
-//        items = _.orderBy(items, this.sortBy, this.sortOrder);
-//      }
-//      return items;
-//    }
-//    return null;
-    return this.lastResponse;
+    if (Array.isArray(lastResponse)) {
+      var items = this.lastResponse;
+      if (this.filter) {
+        items = _.filter(items,this.filter);
+      }
+      if (this.sortBy) {
+        items = _.orderBy(items, this.sortBy, this.sortOrder);
+      }
+      return items;
+    }
+    return null;
   }
 
 }
