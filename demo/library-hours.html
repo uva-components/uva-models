@@ -26,17 +26,22 @@
       <demo-snippet>
         <template>
 
-          <dom-bind>
+          <dom-bind id="demo">
             <template>
-              <uva-library-hours last-response="{{response}}"></uva-library-hours>
+              <uva-library-hours times="{{times}}"></uva-library-hours>
               <ul>
-                <!--
-                <dom-repeat items="[[response]]">
-                  <template>
-                    <li>[[item.title]]</li>
-                  </template>
-                </dom-repeat>
-              -->
+                <template is="dom-repeat" items="[[toCalList(times)]]" as="cal">
+                    <uva-library filter='[[libFilter(cal.id)]]' items="{{cal.libraries}}" sort-by="shortTitle"></uva-library>
+                    <li>[[cal.id]]
+                      <template is="dom-repeat" items="[[cal.libraries]]" as="lib">
+                        <span hidden$="[[!index]]">and</span>
+                        [[lib.title]]
+                      </template>
+                      <span hidden$="[[!cal.libraries.length]]">
+                        <br />[[showTodays(cal)]]
+                      </span>
+                    </li>
+                </template>
               </ul>
             </template>
           </dom-bind>
@@ -44,6 +49,22 @@
         </template>
       </demo-snippet>
 
+      <script>
+        var demo = document.getElementById('demo');
+        demo.toCalList = function(o){
+          return Object.keys(o).map(k=>Object.assign({id:k},{hours:o[k]}));
+        }
+        demo.libFilter = function(id){
+          return (i)=>i.libcalID==id;//{libcalID:id};
+        }
+        demo.todaysTimes = function(times){
+          return times
+        }
+        demo.showTodays = function(cal){
+          var today;
+          return (today = cal.hours[moment().format('YYYY-MM-DD')])? today.rendered: "";
+        }
+      </script>
     </div>
   </body>
 </html>

@@ -102,6 +102,9 @@
             null;
         return range;
       }
+      _makeURL(path,apiVersion) {
+        return "https://api.internal.lib.virginia.edu/production/library/hours";
+      }
     }
 
     window.customElements.define(UvaLibraryHours.is, UvaLibraryHours);

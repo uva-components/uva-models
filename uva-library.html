@@ -44,10 +44,12 @@
       }
       _makeItem(lastResponse, uuid) {
         if (this.lastResponse && this.lastResponse.length>0) {
+
+          var list = (this.filter)? this.lastResponse.filter(this.filter): this.lastResponse;
           if (uuid) {
-            return this.lastResponse.find((e)=>{return (e.uuid==uuid)});
+            return list.find((e)=>{return (e.uuid==uuid)});
           } else if (this.returnFirst) {
-            return this.lastResponse[0];
+            return list[0];
           } else {
             return null;
           }
