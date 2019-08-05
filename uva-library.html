@@ -36,11 +36,17 @@
               returnFirst: {
                 type: Boolean,
                 value: true
+              },
+              firebase: {
+                type: Boolean,
+                value: false
               }
             });
       }
       _makeURL(path,apiVersion) {
-        return this._apidomain+apiVersion+"/library/"+path;
+        return this.firebase?
+          "https://uvalib-api.firebaseio.com/"+path+".json":
+          this._apidomain+apiVersion+"/library/"+path;
       }
       _makeItem(lastResponse, uuid) {
         if (this.lastResponse && this.lastResponse.length>0) {

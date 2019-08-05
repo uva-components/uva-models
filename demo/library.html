@@ -22,13 +22,13 @@
   <body>
     <div class="vertical-section-container centered">
 
-      <h3>Basic uva-library demo for resource cards</h3>
+      <h3>Basic uva-library demo for learning resources</h3>
       <demo-snippet>
         <template>
 
           <dom-bind>
             <template>
-              <uva-library path="web/resource-cards" last-response="{{response}}"></uva-library>
+              <uva-library path="learning" firebase last-response="{{response}}"></uva-library>
               <ul>
                 <dom-repeat items="[[response]]">
                   <template>
