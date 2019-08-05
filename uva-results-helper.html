@@ -1,0 +1,68 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="uva-results-helper">
+  <template>
+    <style>
+      :host { display: none; }
+    </style>
+  </template>
+
+  <script>
+    /**
+     * `uva-results-helper`
+     * Binds to the UVA APIs
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/generic.html
+     * @demo demo/csv.html CSV example
+     */
+    class UvaResultsHelper extends Polymer.Element {
+      static get is() { return 'uva-results-helper'; }
+      static get properties() {
+        return {
+          input: {
+            type: Array,
+            value: ()=>{return []},
+            observer: '_computeOutput'
+          },
+          output: {
+            type: Array,
+            value: ()=>{return []},
+            notify: true
+          },
+          sortBy: {
+            type:String,
+            observer: '_computeOutput'
+          }
+        };
+      }
+      ready(){
+        super.ready();
+        this._computeOutput(this.input);
+      }
+      _computeOutput(){
+        if (!Array.isArray(this.input) || this.input.length===0)
+          this.set('output',out);
+        else {
+          this.set('output',[]);
+          var out = JSON.parse(JSON.stringify(this.input))
+          if (this.sortBy) out = this._sort(this.input);
+          this.set('output',out);
+        }
+      }
+      _sort(input){
+        if (input[0][this.sortBy] && typeof input[0][this.sortBy] === 'string') {
+          input = input.sort((a,b)=>{
+            return a[this.sortBy].toLowerCase().localeCompare(b[this.sortBy].toLowerCase());
+          });
+        } else if (input[0][this.sortBy] && typeof input[0][this.sortBy] === 'number') {
+          input = input.sort((a,b)=>{return a[this.sortBy]-b[this.sortBy]});
+        }
+        return input;
+      }
+    }
+
+    window.customElements.define(UvaResultsHelper.is, UvaResultsHelper);
+  </script>
+</dom-module>

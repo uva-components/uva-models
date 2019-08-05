@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>uva-library demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
+    <link rel="import" href="../uva-library.html">
+    <link rel="import" href="../uva-results-helper.html">
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+
+      <h3>Basic uva-library demo for learning resources</h3>
+      <demo-snippet>
+        <template>
+
+          <dom-bind>
+            <template>
+              <uva-library path="learning" firebase last-response="{{response}}"></uva-library>
+              <uva-results-helper input="[[response]]" output="{{results}}" sort-by="[[sortby]]"></uva-results-helper>
+              <label for="sortby">Sort By:</label>
+              <select id="sortby" value="{{sortby::change}}">
+                <option value="">Choose One</option>
+                <option>title</option>
+                <option>changed</option>
+              </select>
+              <ul>
+                <dom-repeat items="[[results]]">
+                  <template>
+                    <li><strong>[[item.title]]</strong> <em>([[item.category]])</em><br />[[item.changed]]</li>
+                  </template>
+                </dom-repeat>
+              </ul>
+            </template>
+          </dom-bind>
+
+        </template>
+      </demo-snippet>
+
+    </div>
+  </body>
+</html>
