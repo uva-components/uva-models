@@ -34,6 +34,8 @@
           sortBy: {
             type:String
           },
+          filter: String,
+          filterBy: String,
           searchQuery: {
             type:String
           },
@@ -97,7 +99,7 @@
       }
       static get observers() {
         return [
-          '_computeOutput(input,sortBy,searchQuery,searchQuery,searchId,searchCaseSensitive,searchTokenize,searchMatchAllTokens,searchFindAllMatches,searchIncludeScore,searchIncludeMatches,searchThreshold,searchLocation,searchDistance,searchMaxPatternLength,searchMinMatchCharLength,searchKeys)'
+          '_computeOutput(input,sortBy,searchQuery,searchQuery,searchId,searchCaseSensitive,searchTokenize,searchMatchAllTokens,searchFindAllMatches,searchIncludeScore,searchIncludeMatches,searchThreshold,searchLocation,searchDistance,searchMaxPatternLength,searchMinMatchCharLength,searchKeys,filterBy,filter)'
         ]
       }
       _computeOptions(){
@@ -127,6 +129,7 @@
         else {
           this.set('output',[]);
           var out = JSON.parse(JSON.stringify(this.input))
+          if (this.filterBy && this.filter) out = this._filter(out);
           if (this.searchQuery) {
             let fuse = new Fuse(out, this._searchOptions);
             out = fuse.search(this.searchQuery);
@@ -138,6 +141,16 @@
           if (this.sortBy) out = this._sort(out);
           this.set('output',out);
         }
+      }
+      _filter(input){
+        return input.filter(i=>{
+          if (i[this.filterBy] && Array.isArray(i[this.filterBy]) )
+            return i[this.filterBy].includes(this.filter);
+          else if (i[this.filterBy])
+            return i[this.filterBy] === this.filter;
+          else
+            return false;
+        });
       }
       _sort(input){
         if (input[0]['item'][this.sortBy] && typeof input[0]['item'][this.sortBy] === 'string') {

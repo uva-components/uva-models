@@ -30,12 +30,18 @@
           <dom-bind>
             <template>
               <uva-library path="learning" firebase last-response="{{response}}"></uva-library>
-              <uva-results-helper input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]"></uva-results-helper>
-              <label for="sortby">Sort By:</label>
+              <uva-results-helper input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}"></uva-results-helper>
+              <label for="sortby">Sort by:</label>
               <select id="sortby" value="{{sortby::change}}">
                 <option value="">Choose One</option>
                 <option>title</option>
                 <option>changed</option>
+              </select><br />
+              <label for="filterby">Filter by Category:</label>
+              <select id="filterby" value="{{filterby::change}}">
+                <option value="">Choose One</option>
+                <option>teaching</option>
+                <option>beyond-basics</option>
               </select><br />
               <input placeholder="search terms go here" value="{{searchQuery::change}}" />
               <ul>
