@@ -153,12 +153,14 @@
         });
       }
       _sort(input){
-        if (input[0]['item'][this.sortBy] && typeof input[0]['item'][this.sortBy] === 'string') {
-          input = input.sort((a,b)=>{
-            return a.item[this.sortBy].toLowerCase().localeCompare(b.item[this.sortBy].toLowerCase());
-          });
-        } else if (input[0]['item'][this.sortBy] && typeof input[0]['item'][this.sortBy] === 'number') {
-          input = input.sort((a,b)=>{return a['item'][this.sortBy]-b['item'][this.sortBy]});
+        if (Array.isArray(input) && input.length>0) {
+          if (input[0]['item'][this.sortBy] && typeof input[0]['item'][this.sortBy] === 'string') {
+            input = input.sort((a,b)=>{
+              return a.item[this.sortBy].toLowerCase().localeCompare(b.item[this.sortBy].toLowerCase());
+            });
+          } else if (input[0]['item'][this.sortBy] && typeof input[0]['item'][this.sortBy] === 'number') {
+            input = input.sort((a,b)=>{return a['item'][this.sortBy]-b['item'][this.sortBy]});
+          }
         }
         return input;
       }
