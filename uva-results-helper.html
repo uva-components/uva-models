@@ -1,3 +1,4 @@
+<script src="../fuse.js/dist/fuse.js"></script>
 <link rel="import" href="../polymer/polymer-element.html">
 
 <dom-module id="uva-results-helper">
@@ -34,8 +35,85 @@
           sortBy: {
             type:String,
             observer: '_computeOutput'
+          },
+          searchQuery: {
+            type:String,
+            observer: '_computeOutput'
+          },
+          /* The name of the identifier property. If specified, the returned result will be a list of the items' identifiers, otherwise it will be a list of the items. */
+          searchId: {
+            type: String,
+            value: null
+          },
+          /* Indicates whether comparisons should be case sensitive. */
+          searchCaseSensitive: Boolean,
+          /* Whether to sort the result list, by score. */
+          searchShouldSort: Boolean,
+          /* When true, the algorithm will search individual words and the full string, computing the final score as a function of both. In this case, the threshold, distance, and location are inconsequential for individual tokens, and are thus ignored. */
+          searchTokenize: Boolean,
+          /* When true, the result set will only include records that match all tokens. Will only work if tokenize is also true */
+          searchMatchAllTokens: Boolean,
+          /* When true, the matching function will continue to the end of a search pattern even if a perfect match has already been located in the string. */
+          searchFindAllMatches: Boolean,
+          /* Whether the score should be included in the result set. A score of 0 indicates a perfect match, while a score of 1 indicates a complete mismatch. */
+          searchIncludeScore: {
+            type: Boolean,
+            value: true
+          },
+          /* Whether the matches should be included in the result set. When true, each record in the result set will include the indices of the matched characters: indices: [start, end]. These can consequently be used for highlighting purposes. */
+          searchIncludeMatches: Boolean,
+          /* At what point does the match algorithm give up. A threshold of 0.0 requires a perfect match (of both letters and location), a threshold of 1.0 would match anything. */
+          searchThreshold: {
+            type: Number,
+            value: 0.6
+          },
+          /* Determines approximately where in the text is the pattern expected to be found. */
+          searchLocation: {
+            type: Number,
+            value: 0
+          },
+          /* Determines how close the match must be to the fuzzy location (specified by location). An exact letter match which is distance characters away from the fuzzy location would score as a complete mismatch. A distance of 0 requires the match be at the exact location specified, a distance of 1000 would require a perfect match to be within 800 characters of the location to be found using a threshold of 0.8. */
+          searchDistance: {
+            type: Number,
+            value: 100
+          },
+          /* The maximum length of the pattern. The longer the pattern (i.e. the search query), the more intensive the search operation will be. Whenever the pattern exceeds the maxPatternLength, an error will be thrown. Why is this important? Read this. */
+          searchMaxPatternLength: {
+            type: Number,
+            value: 32
+          },
+          /* When set to include matches, only the matches whose length exceeds this value will be returned. (For instance, if you want to ignore single character index returns, set to 2) */
+          searchMinMatchCharLength: {
+            type: Number,
+            value: 1
+          },
+          /* List of properties that will be searched. This supports nested properties, weighted search, searching in arrays of strings and objects */
+          searchKeys: {
+            type: Array,
+            value: ()=>{return ["title"]}
+          },
+          _searchOptions: {
+            type: Object,
+            computed: '_computeOptions(searchId,searchCaseSensitive,searchTokenize,searchMatchAllTokens,searchFindAllMatches,searchIncludeScore,searchIncludeMatches,searchThreshold,searchLocation,searchDistance,searchMaxPatternLength,searchMinMatchCharLength,searchKeys)'
           }
         };
+      }
+      _computeOptions(){
+        return {
+          id: this.searchId,
+          caseSensitive: this.searchCaseSensitive,
+          tokenize: this.searchTokenize,
+          matchAllTokens: this.searchMatchAllTokens,
+          findAllMatches: this.searchFindAllMatches,
+          includeScore: this.searchIncludeScore,
+          includeMatches: this.searchIncludeMatches,
+          threshold: this.searchThreshold,
+          location: this.searchLocation,
+          distance: this.searchDistance,
+          maxPatternLength: this.searchMaxPatternLength,
+          minMatchCharLength: this.searchMinMatchCharLength,
+          keys: this.searchKeys
+        }
       }
       ready(){
         super.ready();
@@ -48,6 +126,14 @@
           this.set('output',[]);
           var out = JSON.parse(JSON.stringify(this.input))
           if (this.sortBy) out = this._sort(this.input);
+          if (this.searchQuery) {
+            let fuse = new Fuse(out, this._searchOptions);
+            out = fuse.search(this.searchQuery);
+          } else {
+            out = out.map(i=>{
+              return {item:i};
+            })
+          }
           this.set('output',out);
         }
       }
