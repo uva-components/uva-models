@@ -139,6 +139,7 @@
             })
           }
           if (this.sortBy) out = this._sort(out);
+          if (out.length<1) out = null;
           this.set('output',out);
         }
       }
