@@ -1,0 +1,61 @@
+<script src="../fuse.js/dist/fuse.js"></script>
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="uva-results-highlighter">
+  <template>
+    <style>
+      :host { display: inline-block; }
+      strong {
+        background-color: yellow;
+        display: inline-block;
+      }
+    </style>
+    <span inner-h-t-m-l="[[_highlightedSlot]]"></span>
+  </template>
+
+  <script>
+    /**
+     * `uva-results-highlighter`
+     * Binds to the UVA APIs
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/generic.html
+     * @demo demo/csv.html CSV example
+     */
+    class UvaResultsHighlighter extends Polymer.Element {
+      static get is() { return 'uva-results-highlighter'; }
+      static get properties() {
+        return {
+          _highlightedSlot: {
+            type:String,
+            computed: '_addMatches(text,matches,matchProperty)',
+            notify: true
+          },
+          text: String,
+          matchProperty: String,
+          matches: Array
+        };
+      }
+      _addMatches(text,matches,matchProperty){
+        if (!matches || !matchProperty) return text;
+        var matchItem = matches.find(i=>i.key===matchProperty);
+        var matches = [].concat(matchItem.indices);
+        var pair = matches.shift();
+        var result = [];
+        for (var i=0; i<text.length; i++) {
+          var char = text.charAt(i)
+          if (pair && i==pair[0]) result.push('<strong>');
+          result.push(char);
+          if (pair && i == pair[1]) {
+            result.push('</strong>');
+            pair = matches.shift();
+          }
+        }
+        return result.join('');
+      }
+    }
+
+    window.customElements.define(UvaResultsHighlighter.is, UvaResultsHighlighter);
+  </script>
+</dom-module>
