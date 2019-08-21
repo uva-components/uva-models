@@ -45,22 +45,40 @@
             value: null
           },
           /* Indicates whether comparisons should be case sensitive. */
-          searchCaseSensitive: Boolean,
+          searchCaseSensitive: {
+            type:Boolean,
+            value: false
+          },
           /* Whether to sort the result list, by score. */
-          searchShouldSort: Boolean,
+          searchShouldSort: {
+            type:Boolean,
+            value: false
+          },
           /* When true, the algorithm will search individual words and the full string, computing the final score as a function of both. In this case, the threshold, distance, and location are inconsequential for individual tokens, and are thus ignored. */
-          searchTokenize: Boolean,
+          searchTokenize: {
+            type:Boolean,
+            value: false
+          },
           /* When true, the result set will only include records that match all tokens. Will only work if tokenize is also true */
-          searchMatchAllTokens: Boolean,
+          searchMatchAllTokens: {
+            type:Boolean,
+            value: false
+          },
           /* When true, the matching function will continue to the end of a search pattern even if a perfect match has already been located in the string. */
-          searchFindAllMatches: Boolean,
+          searchFindAllMatches: {
+            type:Boolean,
+            value: false
+          },
           /* Whether the score should be included in the result set. A score of 0 indicates a perfect match, while a score of 1 indicates a complete mismatch. */
           searchIncludeScore: {
             type: Boolean,
             value: true
           },
           /* Whether the matches should be included in the result set. When true, each record in the result set will include the indices of the matched characters: indices: [start, end]. These can consequently be used for highlighting purposes. */
-          searchIncludeMatches: Boolean,
+          searchIncludeMatches: {
+            type:Boolean,
+            value: false
+          },
           /* At what point does the match algorithm give up. A threshold of 0.0 requires a perfect match (of both letters and location), a threshold of 1.0 would match anything. */
           searchThreshold: {
             type: Number,
