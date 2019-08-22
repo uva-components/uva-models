@@ -1,0 +1,35 @@
+<script src="../js-yaml/dist/js-yaml.min.js"></script>
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="yaml-parser">
+
+  <script>
+    /**
+     * `yaml-parser`
+     * parses yaml
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/yaml.html
+     */
+    class YamlParser extends Polymer.Element {
+      static get is() { return 'yaml-parser'; }
+      static get properties() {
+        return {
+          data: {
+            type: Object,
+            value: ()=>{return null},
+            notify: true
+          }
+        };
+      }
+      ready(){
+        super.ready();
+        let parsed = jsyaml.load(this.firstElementChild.textContent);
+        this.set('data',parsed);
+      }
+    }
+
+    window.customElements.define(YamlParser.is, YamlParser);
+  </script>
+</dom-module>
