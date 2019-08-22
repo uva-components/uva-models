@@ -31,7 +31,7 @@
           <dom-bind>
             <template>
               <uva-library path="learning" firebase last-response="{{response}}"></uva-library>
-              <uva-results-helper input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}"></uva-results-helper>
+              <uva-results-helper search-id="uuid" input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}"></uva-results-helper>
               <label for="sortby">Sort by:</label>
               <select id="sortby" value="{{sortby::change}}">
                 <option value="">Choose One</option>

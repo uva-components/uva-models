@@ -1,4 +1,4 @@
-<script src="../fuse.js/dist/fuse.js"></script>
+<script src="../lunr/lunr.js"></script>
 <link rel="import" href="../polymer/polymer-element.html">
 
 <dom-module id="uva-results-helper">
@@ -26,6 +26,10 @@
             type: Array,
             value: ()=>{return []}
           },
+          first: {
+            type: Object,
+            computed: '_getFirst(output)'
+          },
           output: {
             type: Array,
             value: ()=>{return []},
@@ -42,7 +46,7 @@
           /* The name of the identifier property. If specified, the returned result will be a list of the items' identifiers, otherwise it will be a list of the items. */
           searchId: {
             type: String,
-            value: null
+            value: 'id'
           },
           /* Indicates whether comparisons should be case sensitive. */
           searchCaseSensitive: {
@@ -120,6 +124,10 @@
           '_computeOutput(input,sortBy,searchQuery,searchQuery,searchId,searchCaseSensitive,searchTokenize,searchMatchAllTokens,searchFindAllMatches,searchIncludeScore,searchIncludeMatches,searchThreshold,searchLocation,searchDistance,searchMaxPatternLength,searchMinMatchCharLength,searchKeys,filterBy,filter)'
         ]
       }
+      _getFirst(output){
+        if (output && Array.isArray(output) && output.length > 0)
+          return output[0];
+      }
       _computeOptions(){
         return {
           id: this.searchId,
@@ -149,8 +157,24 @@
           var out = JSON.parse(JSON.stringify(this.input))
           if (this.filterBy && this.filter) out = this._filter(out);
           if (this.searchQuery) {
-            let fuse = new Fuse(out, this._searchOptions);
-            out = fuse.search(this.searchQuery);
+            var tmp = {};
+            var that = this;
+            var idx = lunr(function(){
+              this.ref(that.searchId);
+              that.searchKeys.forEach(function(key){
+                this.field(key);
+              }.bind(this));
+              this.metadataWhitelist = ['position']
+              out.forEach(function(doc){
+                this.add(doc);
+                tmp[doc.uuid] = doc;
+              }, this);
+            });
+            out = idx.search(this.searchQuery).map(d=>{
+              return {item:tmp[d.ref],matches:{}};
+            });
+//            let fuse = new Fuse(out, this._searchOptions);
+//            out = fuse.search(this.searchQuery);
           } else {
             out = out.map(i=>{
               return {item:i};

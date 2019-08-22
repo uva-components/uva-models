@@ -31,8 +31,9 @@
           <dom-bind>
             <template>
               <uva-library path="learning" firebase last-response="{{response}}"></uva-library>
-              <uva-results-helper search-tokenize search-find-all-matches search-min-match-char-length="2" search-include-matches input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}" search-keys='["title"]'></uva-results-helper>
-              <!--<uva-results-helper search-find-all-matches search-min-match-char-length="2" search-threshold=".3" search-include-matches input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}" search-keys='["title"]'></uva-results-helper>-->
+              <!--<uva-results-helper search-tokenize search-find-all-matches search-min-match-char-length="2" search-include-matches input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}" search-keys='["title"]'></uva-results-helper>-->
+              <!--<uva-results-helper search-find-all-matches search-min-match-char-length="2" search-threshold=".8" search-include-matches input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}" search-keys='["category","formatDisplay","textBody","title"]'></uva-results-helper>-->
+              <uva-results-helper search-min-match-char-length="2" search-threshold=".5" include-matches find-all-matches input="[[response]]" output="{{results}}" sort-by="title" search-query="[[searchQuery]]" search-keys='["category","formatDisplay","textBody","title"]'></uva-results-helper>
               <label for="sortby">Sort by:</label>
               <select id="sortby" value="{{sortby::change}}">
                 <option value="">Choose One</option>
@@ -49,7 +50,7 @@
               <ul>
                 <dom-repeat items="[[results]]" as="result">
                   <template>
-                    <li><strong><uva-results-highlighter match-property="title" matches="[[result.matches]]" text="[[result.item.title]]"></uva-results-highlighter></strong> <em>([[result.item.category]])</em><br />[[result.item.changed]]</li>
+                    <li><strong><uva-results-highlighter match-property="title" matches="[[result.matches]]" text="[[result.item.title]]" ></uva-results-highlighter></strong> <em>([[result.item.category]])</em><br />[[result.item.changed]]</li>
                   </template>
                 </dom-repeat>
               </ul>
