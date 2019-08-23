@@ -149,7 +149,7 @@
           this.set('output',out);
         else {
           this.set('output',[]);
-          var out = JSON.parse(JSON.stringify(this.input))
+          var out = this.input;
           if (this.filterBy && this.filter) out = this._filter(out);
           if (this.searchQuery) {
             var tmp = {};

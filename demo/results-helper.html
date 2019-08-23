@@ -48,7 +48,11 @@
               <ul>
                 <dom-repeat items="[[results]]" as="result">
                   <template>
-                    <li><strong>[[result.item.title]]</strong> <em>([[result.item.category]])</em><br />[[result.item.changed]]</li>
+                    <li>
+                      <div><strong>[[result.item.title]]</strong></div>
+                      <div><em>([[result.item.category]])</em></div>
+                      <div>[[result.item.changed]]</div>
+                    </li>
                   </template>
                 </dom-repeat>
               </ul>
