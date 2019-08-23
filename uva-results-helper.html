@@ -38,7 +38,7 @@
           sortBy: {
             type:String
           },
-          filter: String,
+          filter: Object,
           filterBy: String,
           searchQuery: {
             type:String
@@ -170,9 +170,9 @@
                 tmp[doc.uuid] = doc;
               }, this);
             });
-            out = idx.search(this.searchQuery).map(d=>{
+            out = idx.search(this.searchQuery).map(function(d){
               return {item:tmp[d.ref],matches:{}};
-            });
+            }.bind(tmp));
 //            let fuse = new Fuse(out, this._searchOptions);
 //            out = fuse.search(this.searchQuery);
           } else {
@@ -187,12 +187,15 @@
       }
       _filter(input){
         return input.filter(i=>{
-          if (i[this.filterBy] && Array.isArray(i[this.filterBy]) )
-            return i[this.filterBy].includes(this.filter);
-          else if (i[this.filterBy])
-            return i[this.filterBy] === this.filter;
-          else
-            return false;
+          if (!i[this.filterBy] || !this.filter) return false;
+          // make both the filtered by property value and the filter into arrays if not already
+          let f1 = ( Array.isArray(i[this.filterBy]) )?
+            i[this.filterBy]:
+            [i[this.filterBy]];
+          let f2 = ( Array.isArray(this.filter) )?
+            this.filter:
+            [this.filter];
+          return f1.filter(value => f2.includes(value)).length>0;
         });
       }
       _sort(input){
