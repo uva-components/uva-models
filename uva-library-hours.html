@@ -41,6 +41,11 @@
             times: {
               type: Object,
               notify: true
+            },
+            libraryIds: Array,
+            hoursRanges: {
+              type: Array,
+              computed: '_getRanges(libraryIds)'
             }
           });
       }
@@ -82,6 +87,11 @@
           return true;
         else {
           return false;
+        }
+      }
+      _getRanges(libraryIds){
+        if (libraryIds && Array.isArray(libraryIds) && libraryIds.length > 0) {
+            return libraryIds.map(lh=>this.getHoursRange(lh));
         }
       }
       getHoursRange(calID){
