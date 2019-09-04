@@ -45,7 +45,8 @@
             libraryIds: Array,
             hoursRanges: {
               type: Array,
-              computed: '_getRanges(libraryIds)'
+              notify: true,
+              computed: '_getRanges(libraryIds,times,end,start,path)'
             }
           });
       }
