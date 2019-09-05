@@ -31,7 +31,7 @@
           <dom-bind>
             <template>
               <uva-library path="learning" firebase last-response="{{response}}"></uva-library>
-              <uva-results-helper search-id="uuid" input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}"></uva-results-helper>
+              <uva-results-helper search-id="uuid" input="[[response]]" output="{{results}}" sort-by="[[sortby]]" search-query="[[searchQuery]]" filter-by="category" filter="{{filterby}}" search-keys='["category","formatDisplay","textBody","title"]'></uva-results-helper>
               <label for="sortby">Sort by:</label>
               <select id="sortby" value="{{sortby::change}}">
                 <option value="">Choose One</option>
@@ -49,8 +49,9 @@
                 <dom-repeat items="[[results]]" as="result">
                   <template>
                     <li>
-                      <div><strong>[[result.item.title]]</strong></div>
-                      <div><em>([[result.item.category]])</em></div>
+                      <div><strong><uva-results-highlighter match-property="title" matches="[[result.matches]]" text="[[result.item.title]]" ></uva-results-highlighter></strong></div>
+                      <div><uva-results-highlighter match-property="textBody" matches="[[result.matches]]" text="[[result.item.textBody]]" ></uva-results-highlighter></div>
+                      <div><em>(<uva-results-highlighter match-property="category" matches="[[result.matches]]" text="[[result.item.category]]" ></uva-results-highlighter>)</em></div>
                       <div>[[result.item.changed]]</div>
                     </li>
                   </template>

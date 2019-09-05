@@ -37,15 +37,22 @@
           matches: Array
         };
       }
-      _addMatches(text,matches,matchProperty){
-        if (!matches || !matchProperty) return text;
-        var matchItem = matches.find(i=>i.key===matchProperty);
-        var matches = [].concat(matchItem.indices);
+      _addMatches(text,m,matchProperty){
+        if (!m || !matchProperty) return text;
+        var ms = {}
+        for (var term in m) { for (var field in m[term]) { if (ms[field]) { ms[field].concat(m[term][field]) } else { ms[field] = m[term][field] }  }  };
+        matches = ms;
+        var matchItem = matches[matchProperty];
+        if (!matchItem) { return text; }
+        var matches = [].concat(matchItem.position);
         var pair = matches.shift();
+        pair[1] = pair[0]+pair[1]-1;
         var result = [];
         for (var i=0; i<text.length; i++) {
           var char = text.charAt(i)
-          if (pair && i==pair[0]) result.push('<strong>');
+          if (pair && i==pair[0]) {
+            result.push('<strong>');
+          }
           result.push(char);
           if (pair && i == pair[1]) {
             result.push('</strong>');
