@@ -48,6 +48,10 @@
               _force: {
                 type: Boolean,
                 value: true
+              },
+              path: {
+                type: String,
+                value: "alerts"
               }
             });
       }
@@ -89,9 +93,9 @@
           }.bind(this));
         }
       }
-      _makeURL(path,apiVersion) {
-        return this._apidomain+apiVersion+"/library/alerts";
-      }
+//      _makeURL(path,apiVersion) {
+//        return this._apidomain+apiVersion+"/library/alerts";
+//      }
       _getSeenCount(alerts){
         return alerts.filter(a => a.seen).length;
       }
