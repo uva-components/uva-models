@@ -108,7 +108,7 @@
 
         var values = Object.values || valuesPolyfill;
 
-        var range = (this.times && this.times[calID])?
+        var range = (this.times && this.times[calID] && values(this.times[calID])[0])?
             values(this.times[calID])[0].rendered:
             null;
         return range;
