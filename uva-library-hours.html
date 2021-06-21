@@ -111,7 +111,7 @@
         var range = (this.times && this.times[calID] && values(this.times[calID])[0])?
             values(this.times[calID])[0].rendered:
             null;
-        return range;
+        return range? range:"Closed";
       }
       _makeURL(path,apiVersion) {
         return "https://api.internal.lib.virginia.edu/production/library/hours";
