@@ -63,6 +63,46 @@
         parentTemplate.content.insertBefore(childTemplate.content,null);
         return parentTemplate;
       }
+      _parseResponse() {
+        this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
+            Polymer.Async.timeOut.after(200),
+            () => {
+
+let toDays = function(weeks){
+      if(Array.isArray(weeks) && weeks.length>0) {
+        var days = {};
+        weeks.forEach((w)=>{
+          var dayHash = {};
+          if (!Object.values) {
+            values.shim();
+          }
+          Object.values(w).forEach(function(day){
+            if (day.times.hours && day.rendered)
+              dayHash[day.date] = {hours:day.times.hours, rendered: day.rendered};
+            else if (day.rendered)
+              dayHash[day.date] = {rendered: day.rendered};
+          });
+          Object.assign(days, dayHash);
+        });
+        return days;
+      } else {
+        return null;
+      }
+    }
+
+
+        var json = this._lastResponse; 
+        var hash = {};
+        json = json.locations;
+        json.forEach(function(loc){
+            hash[loc.lid] = toDays(loc.weeks);
+        });
+
+
+console.log(hash);
+            this._setLastResponse(hash);
+        });
+      }
       _mkTimes(){
         if (this.lastResponse) {
           this._debouncer = Polymer.Debouncer.debounce(this._debouncer,
@@ -115,7 +155,7 @@
       }
       _makeURL(path,apiVersion) {
         //return "https://api.internal.lib.virginia.edu/production/library/hours";
-        return "https://uvalib-api.firebaseio.com/hours.json";
+        return "https://api3.libcal.com/api_hours_grid.php?iid=863&format=json&weeks=52";
       }
     }
 
